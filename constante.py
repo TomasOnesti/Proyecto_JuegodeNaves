@@ -1,5 +1,9 @@
-tamaño =(1000, 700)
-FPS = 200
+ANCHO = 1000
+ALTO = 700
+tamaño =(ANCHO, ALTO)
+FPS = 300
+
+
 class color:
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
