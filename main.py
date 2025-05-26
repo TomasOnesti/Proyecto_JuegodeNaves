@@ -1,27 +1,25 @@
 import pygame, sys
-import constante
+import constante, personajes
 pygame.init()
 
 reloj = pygame.time.Clock()#FPS
 colores = constante.color()#colores
 pantalla = pygame.display.set_mode(constante.tamaño)#tamaño de pantalla
 fondo = pygame.image.load("img/espacio3.png").convert()#Fondo
-jugador = pygame.image.load("img/nave1.png")#Sprite del jugador
- 
+jugador = personajes.jugador()#Jugador
  
 x=0#coordenada del fondo
-#Variables Mov. Jugador(Velocidad y coordenadas)
-cordx = 50
-cordy = 20
+#Variables Velocidad de movimiento
 velx = 0
 vely = 0
+
 #Bucle donde se ejecuta el juego
 while True:
     #cerrar el juego
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
-        #Evento del teclado para mov. jugador(Poner en una clase mas adelante)
+        #Evento del teclado para mov. jugador
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 velx = -3
@@ -41,8 +39,7 @@ while True:
                 vely = 0
             if event.key == pygame.K_DOWN:
                 vely = 0
-    cordx += velx#mov. lateral
-    cordy += vely#mov. horizontal
+    jugador.movimiento(velx, vely)
     
     #Fondo y mov. del Fondo
     xrelativa = x % fondo.get_rect().width
@@ -51,7 +48,7 @@ while True:
         pantalla.blit(fondo,[xrelativa, 0])
     x -= 1        
     
-    pantalla.blit(jugador,[cordx,cordy])
+    pantalla.blit(jugador.sprite,[jugador.cordx,jugador.cordy])#Muestro al jugador
     
     pygame.display.flip()    
     reloj.tick(constante.FPS)
