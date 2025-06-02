@@ -33,14 +33,15 @@ class meteoritos():
         self.meteoritosl =[]#Lista para almacenar los meteoritos
         #Funciones del meteorito
     def funcionesmeteorito(self):
-        #Generacion
-        if len (self.meteoritosl) < 7:
-            self.meteorito = pygame.Rect( 950, random.randint(0,constante.ALTO - self.alto), self.ancho, self.alto)
-            self.meteoritosl.append(self.meteorito)
-        #Movimiento
-        for self.meteorito in self.meteoritosl:
-         self.meteorito.x -= 2
-        if self.meteorito.right > constante.ANCHO:
-            self.meteoritosl.remove(self.meteorito) 
-    
+    # Generación de meteoritos
+        if len(self.meteoritosl) < 7:
+            nuevo_meteorito = pygame.Rect(950, random.randint(0, constante.ALTO - self.alto), self.ancho, self.alto)
+            self.meteoritosl.append(nuevo_meteorito)
+
+        # Movimiento y eliminación de meteoritos fuera de pantalla
+        for meteorito in self.meteoritosl[:]:  
+            meteorito.x -= 2
+            if meteorito.right <= 0:
+                self.meteoritosl.remove(meteorito)
+
     
