@@ -1,4 +1,5 @@
 import pygame, random, constante
+from armas import *
 pygame.init()
 #Clase del jugador
 class jugador():
@@ -10,6 +11,7 @@ class jugador():
         self.imgnave = pygame.transform.scale(self.imgnave, self.size)#Escala la imagen a un tamaño especifico
         self.nave = pygame.Rect(80 - self.ancho -10, 
             constante.ALTO // 2 - self.alto // 2, self.ancho, self.alto)#Hitbox de la nave
+        self.balas = []
         #Funcion de movimiento
     def movimiento(self):
         keys = pygame.key.get_pressed()
@@ -21,6 +23,20 @@ class jugador():
             self.nave.y +=5
         if keys[pygame.K_UP] and self.nave.top > 0:
             self.nave.y -=5
+            
+    def disparar(self):
+        # Coordenadas de los cañones
+        offset_y = 34  # Separación vertical del centro
+        izquierda_x = self.nave.left + 34
+        derecha_x = self.nave.right - 34
+        centro_y = self.nave.centery
+
+        # Crear dos balas desde los laterales de la nave
+        bala_izquierda = Balas(izquierda_x, centro_y - offset_y)
+        bala_derecha = Balas(derecha_x, centro_y + offset_y)
+
+        self.balas.append(bala_izquierda)
+        self.balas.append(bala_derecha)
             
 #Clase de los meteoritos
 class meteoritos():
@@ -43,5 +59,6 @@ class meteoritos():
             meteorito.x -= 2
             if meteorito.right <= 0:
                 self.meteoritosl.remove(meteorito)
+            
 
     

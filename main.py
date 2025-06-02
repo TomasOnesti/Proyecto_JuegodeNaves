@@ -1,5 +1,6 @@
 import pygame
 import constante, personajes
+from armas import *
 pygame.init()
 
 reloj = pygame.time.Clock()#FPS
@@ -18,6 +19,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_z:
+                jugador.disparar()
+                
     jugador.movimiento()#Funcion de movimiento del jugador
     
     #Fondo y mov. del Fondo
@@ -35,6 +41,20 @@ while running:
     #Muestra los meteoritos por pantalla
     for meteorito.meteorito in meteorito.meteoritosl:
         pantalla.blit(meteorito.imgmeteorito, meteorito.meteorito)
+    
+    for bala in jugador.balas[:]:
+        bala.mover()
+        pygame.draw.rect(pantalla, bala.color, bala.rect)
+        
+        if bala.rect.left > constante.ANCHO:
+            jugador.balas.remove(bala)
+            
+    for bala in jugador.balas[:]:
+        for meteor in meteorito.meteoritosl[:]:
+            if bala.rect.colliderect(meteor):
+                jugador.balas.remove(bala)
+                meteorito.meteoritosl.remove(meteor)
+                break
     
     pantalla.blit(jugador.imgnave, jugador.nave)#Muestra al jugador por pantañña
     
