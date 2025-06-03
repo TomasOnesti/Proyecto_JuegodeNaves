@@ -1,7 +1,7 @@
 ANCHO = 1000
 ALTO = 700
-tamaño =(ANCHO, ALTO)
 FPS = 300
+tamaño =(ANCHO, ALTO)
 colorbg = (0, 0, 0)
 
 

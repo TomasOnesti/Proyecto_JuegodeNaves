@@ -4,13 +4,14 @@ from armas import *
 pygame.init()
 
 reloj = pygame.time.Clock()#FPS
+fuente= pygame.font.Font(None, 40)
 colores = constante.color()#colores
 pantalla = pygame.display.set_mode(constante.tamaño)#tamaño de pantalla
 fondo = pygame.image.load("img/espacio3.png").convert()#Fondo
 jugador = personajes.jugador()#Jugador(Variable que almacena la clase jugador)
 meteorito = personajes.meteoritos()#Meteoritos
 x=0#coordenada del fondo
-
+puntos=0
 #Bucle donde se ejecuta el juego
 running = True
 while running:
@@ -19,6 +20,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            
         
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_z:
@@ -45,7 +47,6 @@ while running:
     for bala in jugador.balas[:]:
         bala.mover()
         pygame.draw.rect(pantalla, bala.color, bala.rect)
-        
         if bala.rect.left > constante.ANCHO:
             jugador.balas.remove(bala)
             
@@ -54,9 +55,15 @@ while running:
             if bala.rect.colliderect(meteor):
                 jugador.balas.remove(bala)
                 meteorito.meteoritosl.remove(meteor)
+                puntos += 1
                 break
-    
+    score = fuente.render(str(puntos), True, colores.WHITE)
+    pantalla.blit(score, (0, 0))
     pantalla.blit(jugador.imgnave, jugador.nave)#Muestra al jugador por pantañña
-    
+
     pygame.display.flip()    
     reloj.tick(constante.FPS)
+
+print("Tu puntuacion final es de: ", puntos)
+
+
