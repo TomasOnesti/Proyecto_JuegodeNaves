@@ -4,7 +4,7 @@ from armas import *
 pygame.init()
 
 reloj = pygame.time.Clock()#FPS
-fuente= pygame.font.Font(None, 40)
+fuente= pygame.font.Font(None, 40)#Letra
 colores = constante.color()#colores
 pantalla = pygame.display.set_mode(constante.tamaño)#tamaño de pantalla
 fondo = pygame.image.load("img/espacio3.png").convert()#Fondo
@@ -37,12 +37,12 @@ while running:
     meteorito.funcionesmeteorito() #Movimiento y generacion de los meteoritos
     
     #Colicion con los meteoritos
-    for meteorito.meteorito in meteorito.meteoritosl:
-        if jugador.nave.colliderect(meteorito.meteorito):
+    for met in meteorito.meteoritosl:
+        if jugador.nave.colliderect(met["rect"]):
             running = False
     #Muestra los meteoritos por pantalla
-    for meteorito.meteorito in meteorito.meteoritosl:
-        pantalla.blit(meteorito.imgmeteorito, meteorito.meteorito)
+    for met in meteorito.meteoritosl:
+        pantalla.blit(met["img"], met["rect"])
     
     for bala in jugador.balas[:]:
         bala.mover()
@@ -51,10 +51,13 @@ while running:
             jugador.balas.remove(bala)
             
     for bala in jugador.balas[:]:
-        for meteor in meteorito.meteoritosl[:]:
-            if bala.rect.colliderect(meteor):
+        for met in meteorito.meteoritosl[:]:
+            if bala.rect.colliderect(met["rect"]):
                 jugador.balas.remove(bala)
-                meteorito.meteoritosl.remove(meteor)
+                meteorito.meteoritosl.remove(met)
+                if met["tipo"] == "divisible":
+                    nuevos_meteoritos = meteorito.dividir_meteoritos(met)
+                    meteorito.meteoritosl.extend(nuevos_meteoritos)
                 puntos += 1
                 break
     score = fuente.render(str(puntos), True, colores.WHITE)

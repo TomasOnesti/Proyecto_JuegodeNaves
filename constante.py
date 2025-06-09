@@ -6,6 +6,7 @@ colorbg = (0, 0, 0)
 
 
 
+
 class color:
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
