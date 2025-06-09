@@ -11,7 +11,7 @@ class jugador():
         self.imgnave = pygame.transform.scale(self.imgnave, self.size)#Escala la imagen a un tamaño especifico
         self.nave = pygame.Rect(80 - self.ancho -10, 
             constante.ALTO // 2 - self.alto // 2, self.ancho, self.alto)#Hitbox de la nave
-        self.balas = []
+        self.balas = []#Lista de almacenamiento de las balas
         #Funcion de movimiento
     def movimiento(self):
         keys = pygame.key.get_pressed()

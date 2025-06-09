@@ -1,12 +1,10 @@
-ANCHO = 1000
-ALTO = 700
-FPS = 300
-tamaño =(ANCHO, ALTO)
-colorbg = (0, 0, 0)
+ANCHO = 1000#Ancho de la pantalla
+ALTO = 700#Alto de la pantalla
+FPS = 300#Cantidad de Frame por Segundo 
+tamaño =(ANCHO, ALTO) #Tamaño de la pantalla
 
 
-
-
+#Clase con colores para usar
 class color:
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)

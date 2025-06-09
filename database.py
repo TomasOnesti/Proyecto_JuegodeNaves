@@ -1,5 +1,5 @@
 import mysql.connector
-
+#Base de datos: Insert score and username
 class ranking():
     def __init__(self):
         self.ranking = mysql.connector.connect(
@@ -9,7 +9,7 @@ class ranking():
         database="ranking"
         )
         self.mycursor = self.ranking.cursor()
-    
+    #Funcion insertar(inserta a la base de datos)
     def insertar(self, nombre, puntaje):
         sql = "INSERT INTO usuario (usuario, puntaje) VALUES (%s, %s)"
         val = (nombre, puntaje)
