@@ -106,7 +106,7 @@ class meteoritos():
         nuevo_tamaño = self.meteoros["tamanios"][nuevo_tamaño_key]
         velocidad = meteorito["velocidad"]
         meteoritos_nuevos = []
-
+        #Pequeña separacion de los meteoritos al dividirse
         separacion = [
         (0, 0),
         (int(nuevo_tamaño[0] * 0.9), int(nuevo_tamaño[1] * 0.9))

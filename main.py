@@ -1,4 +1,4 @@
-import pygame
+import pygame, database
 import constante, personajes
 from armas import *
 pygame.init()
@@ -10,6 +10,7 @@ pantalla = pygame.display.set_mode(constante.tamaño)#tamaño de pantalla
 fondo = pygame.image.load("img/espacio3.png").convert()#Fondo
 jugador = personajes.jugador()#Jugador(Variable que almacena la clase jugador)
 meteorito = personajes.meteoritos()#Meteoritos
+db= database.ranking()
 x=0#coordenada del fondo
 puntos=0
 #Bucle donde se ejecuta el juego
@@ -66,7 +67,8 @@ while running:
 
     pygame.display.flip()    
     reloj.tick(constante.FPS)
-
+nombre = input("escribe tu nombre")
+db.insertar(nombre, puntos)
 print("Tu puntuacion final es de: ", puntos)
 
 
