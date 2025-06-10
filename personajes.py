@@ -4,8 +4,8 @@ pygame.init()
 #Clase del jugador
 class jugador():
     def __init__(self):
-        self.ancho = 70
-        self.alto = 70
+        self.ancho = 65
+        self.alto = 65
         self.size=(self.ancho, self.alto)#Tamaño jugador
         self.imgnave = pygame.image.load("img/nave1_.png").convert_alpha()#Imagen de la nave(Jugador)
         self.imgnave = pygame.transform.scale(self.imgnave, self.size)#Escala la imagen a un tamaño especifico
@@ -44,9 +44,9 @@ class meteoritos():
         self.imgmeteorito = pygame.image.load("img/meteorito1.png").convert_alpha()#Imagen de los meteoritos
         self.imgmeteorito2= pygame.image.load("img/meteorito_2.png").convert_alpha()
         self.meteoros={
-            "meteorobase":(60,60),
+            "meteorobase":(60,70),
             "tamanios": {
-                "grande":(100,100),
+                "grande":(80,80),
                 "mediano": (60,60),
                 "chico":(40,40)
             },

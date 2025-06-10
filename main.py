@@ -75,6 +75,6 @@ while running:
     pygame.display.flip()    
     reloj.tick(constante.FPS)
 #Base de datos: insercion de datos(pedir nombre)
-nombre = input("escribe tu nombre")
+nombre = input(" escribe tu nombre ")
 db.insertar(nombre, puntos)
 print("Tu puntuacion final es de: ", puntos)
