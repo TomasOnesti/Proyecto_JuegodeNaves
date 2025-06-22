@@ -43,6 +43,7 @@ while running:
     for met in meteorito.meteoritosl:
         if jugador.nave.colliderect(met["rect"]):
             running = False
+            gameover = True
     #Muestra los meteoritos por pantalla
     for met in meteorito.meteoritosl:
         pantalla.blit(met["img"], met["rect"])
@@ -78,3 +79,34 @@ while running:
 nombre = input(" escribe tu nombre ")
 db.insertar(nombre, puntos)
 print("Tu puntuacion final es de: ", puntos)
+
+
+#Pantalla de gameover
+while gameover:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            gameover = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                gameover = False
+    
+    
+    
+    pantalla.blit(fondo,(0,0))#Fondo estatico en la pantalla del fin del juego
+    
+    #Letra y posicion del texto de gameover
+    fuente_fin = pygame.font.Font(None, 60)
+    texto_fin = fuente_fin.render("GameOver", True, colores.RED)
+    espacio_fin = texto_fin.get_rect(center=(constante.ANCHO/2, constante.ALTO/3))
+    pantalla.blit(texto_fin,espacio_fin)
+    #Letra y posicion del texto de puntuación
+    puntuacion_final = fuente.render(f"Tu puntuacion final es de: {puntos}", True, colores.WHITE )
+    pantalla.blit(puntuacion_final, (constante.ANCHO/2 - puntuacion_final.get_width()/2,constante.ALTO/2))
+    #Letra y posición del texto instructivo para salir
+    instruccion = fuente.render("Presionar enter para salir", True, colores.WHITE)
+    espacio_ins = instruccion.get_rect(center =(constante.ANCHO/2, constante.ALTO - 200))
+    pantalla.blit(instruccion, espacio_ins)
+    pygame.display.flip()    
+    reloj.tick(constante.FPS)
+    
+pygame.quit()
