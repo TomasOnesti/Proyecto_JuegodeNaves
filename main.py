@@ -15,8 +15,39 @@ db= database.ranking()
 x=0#coordenada del fondo
 puntos=0 #Puntuacion inicial en 0
 
+#Bucle de pantalla de inicio
+inicio =True
+while inicio: 
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            inicio = False
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                inicio = False
+                running = True
+
+    pantalla.blit(fondo,(0,0))
+    #Texto de inicio del juego
+    fuente_inicio = pygame.font.Font(None,60)
+    texto_inicial= fuente_inicio.render("Iniciar Juego", True, colores.YELLOW)
+    espacio = texto_inicial.get_rect(center=(constante.ANCHO/2, constante.ALTO/3))
+    pantalla.blit(texto_inicial, espacio)
+    #Texto instructivo
+    text_ins= fuente.render("Presione espacio para iniciar",True, colores.YELLOW)
+    pantalla.blit(text_ins, (constante.ANCHO/2 - text_ins.get_width()/2,constante.ALTO-450))
+
+    text_op= fuente_inicio.render("Opciones", True, colores.YELLOW)
+    espacio_op = (constante.ANCHO/2 - text_op.get_width()/2, constante.ALTO-380)
+    pantalla.blit(text_op, espacio_op)
+
+    text_ins_op= fuente.render("Presione E para entrar en las opciones", True, colores.YELLOW)
+    pantalla.blit(text_ins_op, (constante.ANCHO/3 - text_op.get_width()/2, constante.ALTO-330)) 
+    pygame.display.flip()    
+    reloj.tick(constante.FPS)
+    
 #Bucle donde se ejecuta el juego
-running = True
+
 while running:
     pantalla.fill(constante.color().BLACK)
     #cerrar el juego
