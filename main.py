@@ -12,39 +12,69 @@ fondo = pygame.image.load("img/espacio3.png").convert()#Fondo
 jugador = personajes.jugador()#Jugador(Variable que almacena la clase jugador)
 meteorito = personajes.meteoritos()#Meteoritos
 db= database.ranking()
+dificultades = ["Fácil", "Normal", "Difícil"]
+niveles_generacion = [2, 6, 9]  # meteoritos máximos para cada dificultad
+indice_dificultad = 1  # Por defecto "Normal"
+
+tamaños_pantalla = [(800, 600), (1000, 700), (1200, 800)]
+indice_tamaño = 1  # Por defecto tamaño medio
+
+muteado = False
 x=0#coordenada del fondo
 puntos=0 #Puntuacion inicial en 0
 
 #Bucle de pantalla de inicio
 inicio =True
 while inicio: 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            inicio = False
-            running = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+        pantalla.blit(fondo,(0,0))
+
+        fuente_inicio = pygame.font.Font(None,60)
+        texto_inicial= fuente_inicio.render("Iniciar Juego", True, colores.YELLOW)
+        espacio = texto_inicial.get_rect(center=(constante.ANCHO/2, constante.ALTO/4))
+        pantalla.blit(texto_inicial, espacio)
+
+        text_ins= fuente.render("Presione espacio para iniciar",True, colores.YELLOW)
+        pantalla.blit(text_ins, (constante.ANCHO/2 - text_ins.get_width()/2,constante.ALTO-450))
+
+        # Botones de opciones
+        boton_mute = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 - 30, 200, 40)
+        boton_dificultad = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 + 30, 200, 40)
+        boton_tamaño = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 + 90, 200, 40)
+
+        pygame.draw.rect(pantalla, colores.WHITE, boton_mute, border_radius=8)
+        pygame.draw.rect(pantalla, colores.WHITE, boton_dificultad, border_radius=8)
+        pygame.draw.rect(pantalla, colores.WHITE, boton_tamaño, border_radius=8)
+
+        mute_text = fuente.render(f"Mute: {'Sí' if muteado else 'No'}", True, colores.BLACK)
+        dificultad_text = fuente.render(f"Dificultad: {dificultades[indice_dificultad]}", True, colores.BLACK)
+        tamaño_text = fuente.render(f"Pantalla: {tamaños_pantalla[indice_tamaño][0]}x{tamaños_pantalla[indice_tamaño][1]}", True, colores.BLACK)
+
+        pantalla.blit(mute_text, (boton_mute.x + 10, boton_mute.y + 5))
+        pantalla.blit(dificultad_text, (boton_dificultad.x + 10, boton_dificultad.y + 5))
+        pantalla.blit(tamaño_text, (boton_tamaño.x + 10, boton_tamaño.y + 5))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 inicio = False
-                running = True
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    inicio = False
+                    running = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if boton_mute.collidepoint(event.pos):
+                    muteado = not muteado  # Todavía no afecta la música
+                if boton_dificultad.collidepoint(event.pos):
+                    indice_dificultad = (indice_dificultad + 1) % len(dificultades)
+                if boton_tamaño.collidepoint(event.pos):
+                    indice_tamaño = (indice_tamaño + 1) % len(tamaños_pantalla)
+                    constante.ANCHO, constante.ALTO = tamaños_pantalla[indice_tamaño]
+                    constante.tamaño = tamaños_pantalla[indice_tamaño]
+                    pantalla = pygame.display.set_mode(constante.tamaño)
 
-    pantalla.blit(fondo,(0,0))
-    #Texto de inicio del juego
-    fuente_inicio = pygame.font.Font(None,60)
-    texto_inicial= fuente_inicio.render("Iniciar Juego", True, colores.YELLOW)
-    espacio = texto_inicial.get_rect(center=(constante.ANCHO/2, constante.ALTO/3))
-    pantalla.blit(texto_inicial, espacio)
-    #Texto instructivo
-    text_ins= fuente.render("Presione espacio para iniciar",True, colores.YELLOW)
-    pantalla.blit(text_ins, (constante.ANCHO/2 - text_ins.get_width()/2,constante.ALTO-450))
+        pygame.display.flip()
+        reloj.tick(constante.FPS)
 
-    text_op= fuente_inicio.render("Opciones", True, colores.YELLOW)
-    espacio_op = (constante.ANCHO/2 - text_op.get_width()/2, constante.ALTO-380)
-    pantalla.blit(text_op, espacio_op)
-
-    text_ins_op= fuente.render("Presione E para entrar en las opciones", True, colores.YELLOW)
-    pantalla.blit(text_ins_op, (constante.ANCHO/3 - text_op.get_width()/2, constante.ALTO-330)) 
-    pygame.display.flip()    
-    reloj.tick(constante.FPS)
     
 #Bucle donde se ejecuta el juego
 
@@ -68,7 +98,7 @@ while running:
     if(xrelativa < constante.ANCHO):
         pantalla.blit(fondo,[xrelativa, 0])
     x -= 1        
-    meteorito.funcionesmeteorito() #Movimiento y generacion de los meteoritos
+    meteorito.funcionesmeteorito(niveles_generacion, indice_dificultad) #Movimiento y generacion de los meteoritos
     
     #Colicion con los meteoritos
     for met in meteorito.meteoritosl:
@@ -78,6 +108,7 @@ while running:
     #Muestra los meteoritos por pantalla
     for met in meteorito.meteoritosl:
         pantalla.blit(met["img"], met["rect"])
+        pygame.draw.rect(pantalla, colores.RED, met["rect"], 2)#Muestra hitbox
     #Mover y mostrar las balas del jugador
     for bala in jugador.balas[:]:
         bala.mover()
@@ -103,6 +134,8 @@ while running:
     score = fuente.render(str(puntos), True, colores.WHITE) 
     pantalla.blit(score, (0, 0))
     pantalla.blit(jugador.imgnave, jugador.nave)#Muestra al jugador por pantalla
+    pygame.draw.rect(pantalla, colores.GREEN, jugador.nave, 2)
+    
 
     pygame.display.flip()    
     reloj.tick(constante.FPS)

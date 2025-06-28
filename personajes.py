@@ -10,7 +10,7 @@ class jugador():
         self.imgnave = pygame.image.load("img/nave1_.png").convert_alpha()#Imagen de la nave(Jugador)
         self.imgnave = pygame.transform.scale(self.imgnave, self.size)#Escala la imagen a un tamaño especifico
         self.nave = pygame.Rect(80 - self.ancho -10, 
-            constante.ALTO // 2 - self.alto // 2, self.ancho, self.alto)#Hitbox de la nave
+            constante.ALTO // 2 - self.alto // 2, self.ancho, self.alto).inflate(-10,-8)#Hitbox de la nave
         self.balas = []#Lista de almacenamiento de las balas
         #Funcion de movimiento
     def movimiento(self):
@@ -66,6 +66,7 @@ class meteoritos():
         tamaño = self.meteoros["meteorobase"]
         velocidad = self.meteoros["velocidades"]["medio"]
         rect = pygame.Rect(950, random.randint(0, constante.ALTO - tamaño[1]), tamaño[0], tamaño[1])
+        rect = rect.inflate(-6, -8)
         img = pygame.transform.scale(self.imgmeteorito, tamaño)
         meteor = {"rect": rect, "tipo": "normal", "velocidad": velocidad, "img": img}
         self.meteoritosl.append(meteor)
@@ -75,12 +76,14 @@ class meteoritos():
         tamaño = self.meteoros["tamanios"]["grande"]
         velocidad = self.meteoros["velocidades"]["medio"]
         rect = pygame.Rect(950, random.randint(0, constante.ALTO - tamaño[1]), tamaño[0], tamaño[1])
+        rect = rect.inflate(-6, -8)
         img = pygame.transform.scale(self.imgmeteorito2, tamaño)
         meteor = {"rect": rect, "tipo": "divisible", "size_key": "grande", "velocidad": velocidad, "img": img}
         self.meteoritosl.append(meteor)
-    def funcionesmeteorito(self):
+        
+    def funcionesmeteorito(self, niveles_generacion, indice_dif):
     # Generación de meteoritos
-        if len(self.meteoritosl) < 7:
+        if len(self.meteoritosl) < niveles_generacion[indice_dif]:
             if random.random() < 0.5:
                 self.generar_meteorito1()
             else:
@@ -115,6 +118,7 @@ class meteoritos():
             x = meteorito["rect"].x + off[0]
             y = meteorito["rect"].y + off[1]
             rect = pygame.Rect(x, y, nuevo_tamaño[0], nuevo_tamaño[1])
+            rect = rect.inflate(-7, -7)
             img = pygame.transform.scale(self.imgmeteorito2, nuevo_tamaño)
             nuevo_meteorito = {
                 "rect": rect, 
