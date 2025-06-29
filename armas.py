@@ -9,3 +9,13 @@ class Balas():
 
     def mover(self):
         self.rect.x += 5 #velocidad
+
+class BalaEnemiga():
+    def __init__(self, x, y):
+        self.ancho = 6
+        self.alto = 4
+        self.color = constante.color.BLUE
+        self.rect = pygame.Rect(x, y, self.ancho, self.alto)
+
+    def mover(self):
+        self.rect.x -= 3  # Va hacia la izquierda

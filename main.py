@@ -6,78 +6,100 @@ pygame.init()
 #Variables importantes
 reloj = pygame.time.Clock()#FPS
 fuente= pygame.font.Font(None, 40)#Letra
+
+pygame.mixer.music.load("elementos/audios/musica/musicadejuego.mp3")
+gameover_sound= pygame.mixer.Sound("elementos/audios/efectos/juego_terminado.mp3")
+muerte = pygame.mixer.Sound("elementos/audios/efectos/muerte.mp3")
+muerte.set_volume(constante.efecto)
+
+gameover_sound.set_volume(0.6)
+pygame.mixer.music.set_volume(constante.musica)
+
 colores = constante.color()#colores
 pantalla = pygame.display.set_mode(constante.tamaño)#tamaño de pantalla
-fondo = pygame.image.load("img/espacio3.png").convert()#Fondo
+fondo = pygame.image.load("elementos/assets/background/espacio3.png").convert()#Fondo
 jugador = personajes.jugador()#Jugador(Variable que almacena la clase jugador)
 meteorito = personajes.meteoritos()#Meteoritos
 db= database.ranking()
+enemigos = personajes.enemigo()
 dificultades = ["Fácil", "Normal", "Difícil"]
-niveles_generacion = [2, 6, 9]  # meteoritos máximos para cada dificultad
+niveles_generacion = [2, 5, 7]  # meteoritos por cada dificultad
 indice_dificultad = 1  # Por defecto "Normal"
+
+running = False
+gameover = False
+inicio = True
+
+arma2_disparadores = set()
+activar_arma = [300, 500] + [800 * i for i in range(1, 100)]
+arma3_disparador= set()
+activar_arma3=[600, 1100] + [1400 * i for i in range(1,100)]
 
 tamaños_pantalla = [(800, 600), (1000, 700), (1200, 800)]
 indice_tamaño = 1  # Por defecto tamaño medio
-
 muteado = False
+
+balas_a_remover = []
+meteoritos_a_remover = []
+enemigos_a_remover = []
+balas_enemigas_a_remover = []
+
+
 x=0#coordenada del fondo
 puntos=0 #Puntuacion inicial en 0
 
 #Bucle de pantalla de inicio
-inicio =True
 while inicio: 
-        pantalla.blit(fondo,(0,0))
+    pantalla.blit(fondo,(0,0))
 
-        fuente_inicio = pygame.font.Font(None,60)
-        texto_inicial= fuente_inicio.render("Iniciar Juego", True, colores.YELLOW)
-        espacio = texto_inicial.get_rect(center=(constante.ANCHO/2, constante.ALTO/4))
-        pantalla.blit(texto_inicial, espacio)
+    fuente_inicio = pygame.font.Font(None,60)
+    texto_inicial= fuente_inicio.render("Iniciar Juego", True, colores.YELLOW)
+    espacio = texto_inicial.get_rect(center=(constante.ANCHO/2, constante.ALTO/4))
+    pantalla.blit(texto_inicial, espacio)
 
-        text_ins= fuente.render("Presione espacio para iniciar",True, colores.YELLOW)
-        pantalla.blit(text_ins, (constante.ANCHO/2 - text_ins.get_width()/2,constante.ALTO-450))
+    text_ins= fuente.render("Presione espacio para iniciar",True, colores.YELLOW)
+    pantalla.blit(text_ins, (constante.ANCHO/2 - text_ins.get_width()/2,constante.ALTO-450))
 
-        # Botones de opciones
-        boton_mute = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 - 30, 200, 40)
-        boton_dificultad = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 + 30, 200, 40)
-        boton_tamaño = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 + 90, 200, 40)
+    # Botones de opciones
+    boton_mute = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 - 30, 200, 40)
+    boton_dificultad = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 + 30, 200, 40)
+    boton_tamaño = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 + 90, 200, 40)
 
-        pygame.draw.rect(pantalla, colores.WHITE, boton_mute, border_radius=8)
-        pygame.draw.rect(pantalla, colores.WHITE, boton_dificultad, border_radius=8)
-        pygame.draw.rect(pantalla, colores.WHITE, boton_tamaño, border_radius=8)
+    pygame.draw.rect(pantalla, colores.WHITE, boton_mute, border_radius=8)
+    pygame.draw.rect(pantalla, colores.WHITE, boton_dificultad, border_radius=8)
+    pygame.draw.rect(pantalla, colores.WHITE, boton_tamaño, border_radius=8)
 
-        mute_text = fuente.render(f"Mute: {'Sí' if muteado else 'No'}", True, colores.BLACK)
-        dificultad_text = fuente.render(f"Dificultad: {dificultades[indice_dificultad]}", True, colores.BLACK)
-        tamaño_text = fuente.render(f"Pantalla: {tamaños_pantalla[indice_tamaño][0]}x{tamaños_pantalla[indice_tamaño][1]}", True, colores.BLACK)
+    mute_text = fuente.render(f"Mute: {'Sí' if muteado else 'No'}", True, colores.BLACK)
+    dificultad_text = fuente.render(f"Dificultad: {dificultades[indice_dificultad]}", True, colores.BLACK)
+    tamaño_text = fuente.render(f"Pantalla: {tamaños_pantalla[indice_tamaño][0]}x{tamaños_pantalla[indice_tamaño][1]}", True, colores.BLACK)
 
-        pantalla.blit(mute_text, (boton_mute.x + 10, boton_mute.y + 5))
-        pantalla.blit(dificultad_text, (boton_dificultad.x + 10, boton_dificultad.y + 5))
-        pantalla.blit(tamaño_text, (boton_tamaño.x + 10, boton_tamaño.y + 5))
+    pantalla.blit(mute_text, (boton_mute.x + 10, boton_mute.y + 5))
+    pantalla.blit(dificultad_text, (boton_dificultad.x + 10, boton_dificultad.y + 5))
+    pantalla.blit(tamaño_text, (boton_tamaño.x + 10, boton_tamaño.y + 5))
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            inicio = False
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
                 inicio = False
-                running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    inicio = False
-                    running = True
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if boton_mute.collidepoint(event.pos):
-                    muteado = not muteado  # Todavía no afecta la música
-                if boton_dificultad.collidepoint(event.pos):
-                    indice_dificultad = (indice_dificultad + 1) % len(dificultades)
-                if boton_tamaño.collidepoint(event.pos):
-                    indice_tamaño = (indice_tamaño + 1) % len(tamaños_pantalla)
-                    constante.ANCHO, constante.ALTO = tamaños_pantalla[indice_tamaño]
-                    constante.tamaño = tamaños_pantalla[indice_tamaño]
-                    pantalla = pygame.display.set_mode(constante.tamaño)
+                running = True
+                pygame.mixer.music.play(-1)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if boton_mute.collidepoint(event.pos):
+                muteado = not muteado  # Todavía no afecta la música
+            if boton_dificultad.collidepoint(event.pos):
+                indice_dificultad = (indice_dificultad + 1) % len(dificultades)
+            if boton_tamaño.collidepoint(event.pos):
+                indice_tamaño = (indice_tamaño + 1) % len(tamaños_pantalla)
+                constante.ANCHO, constante.ALTO = tamaños_pantalla[indice_tamaño]
+                constante.tamaño = tamaños_pantalla[indice_tamaño]
+                pantalla = pygame.display.set_mode(constante.tamaño)
 
-        pygame.display.flip()
-        reloj.tick(constante.FPS)
-
-    
+    pygame.display.flip()
+    reloj.tick(constante.FPS)
 #Bucle donde se ejecuta el juego
-
 while running:
     pantalla.fill(constante.color().BLACK)
     #cerrar el juego
@@ -103,6 +125,7 @@ while running:
     #Colicion con los meteoritos
     for met in meteorito.meteoritosl:
         if not jugador.inmortal and jugador.nave.colliderect(met["rect"]):
+            gameover_sound.play()
             running = False
             gameover = True
     #Muestra los meteoritos por pantalla
@@ -116,40 +139,107 @@ while running:
         if bala.rect.left > constante.ANCHO:
             jugador.balas.remove(bala)
     #Coliciones meteoritos con balas
-    for bala in jugador.balas[:]:
-        for met in meteorito.meteoritosl[:]:
+    for bala in jugador.balas:
+        for met in meteorito.meteoritosl:
             if bala.rect.colliderect(met["rect"]):
-                jugador.balas.remove(bala)
-                meteorito.meteoritosl.remove(met)
+                if bala not in balas_a_remover:
+                    balas_a_remover.append(bala)
+                if met not in meteoritos_a_remover:
+                    meteoritos_a_remover.append(met)
+                
+                
                 if met["tipo"] == "divisible":
                     nuevos_meteoritos = meteorito.dividir_meteoritos(met)
                     meteorito.meteoritosl.extend(nuevos_meteoritos)
                     if met["size_key"] == "grande":
-                        puntos +=3
-                    elif met["size_key"]=="chico":
-                        puntos +=1
+                        puntos += 3
+                    elif met["size_key"] == "chico":
+                        puntos += 1
                 puntos += 2
-                if puntos >= 300 and jugador.arma != 2 and not jugador.en_animacion and jugador.arma2_balas > 0:
-                    jugador.iniciar_cambio_arma(2)
-                break
-    #Pequeña muestra de puntaje en la esquina superior izquierda de la pantalla
+                
+                for activar in activar_arma:
+                    if puntos >= activar and activar not in arma2_disparadores:
+                        if jugador.arma != 2 and not jugador.en_animacion and jugador.arma2_balas > 0:
+                            jugador.iniciar_cambio_arma(2)
+                            arma2_disparadores.add(activar)
+                        
+                        if jugador.arma == 2 and jugador.arma2_balas > 0:
+                            jugador.arma2_balas = 250
+                        break
+                
+                for activar in activar_arma3:
+                    if puntos >= activar and activar not in arma3_disparador:
+                        if jugador.arma != 2 and not jugador.en_animacion and jugador.arma3_balas > 0:
+                            jugador.iniciar_cambio_arma(3)
+                            arma3_disparador.add(activar)
+                            
+                        if jugador.arma == 3 and jugador.arma3_balas > 0:
+                            jugador.arma3_balas = 60
+                        break
+    for bala in balas_a_remover:
+        if bala in jugador.balas:
+            jugador.balas.remove(bala)
+    for met in meteoritos_a_remover:
+        if met in meteorito.meteoritosl:
+            muerte.play()
+            meteorito.meteoritosl.remove(met)
+#Enemigos    
+    enemigos.mover_y_disparar()
+    
+    for ene in enemigos.lista_enemigos:
+        pantalla.blit(enemigos.img_enemigo, ene["rect"])
+        pygame.draw.rect(pantalla, colores.RED, ene["rect"], 2)  # hitbox opcional
+
+    for bala in enemigos.lista_balas_enemigas:
+        pygame.draw.rect(pantalla, bala.color, bala.rect)
+    
+    for bala in enemigos.lista_balas_enemigas[:]:
+        if not jugador.inmortal and bala.rect.colliderect(jugador.nave):
+            gameover_sound.play()
+            running = False
+            gameover = True
+            
+    for bala in jugador.balas:
+        for ene in enemigos.lista_enemigos:
+            if bala.rect.colliderect(ene["rect"]):
+                if bala not in balas_a_remover:
+                    balas_a_remover.append(bala)
+                if ene not in enemigos_a_remover:
+                    enemigos_a_remover.append(ene)
+                puntos +=3
+   
+    for ene in enemigos_a_remover:
+        if ene in enemigos.lista_enemigos:
+            muerte.play()
+            enemigos.lista_enemigos.remove(ene)
+    
+    if len(enemigos.lista_enemigos) == 0:
+        enemigos.lista_balas_enemigas.clear()
+        enemigos.crear_enemigos(niveles_generacion, indice_dificultad)
+    
+    if len(enemigos.lista_enemigos) == 0:
+        enemigos.crear_enemigos(niveles_generacion, indice_dificultad)
+    #Putaje
     score = fuente.render(str(puntos), True, colores.WHITE) 
     pantalla.blit(score, (0, 0))
     jugador.render(pantalla)#Muestra al jugador por pantalla
     pygame.draw.rect(pantalla, colores.GREEN, jugador.nave, 2)
     if jugador.arma == 1:
         municion = fuente.render(f"Munición: {jugador.balas_restantes}", True, colores.WHITE)
-    else:
+    elif jugador.arma == 2:
         municion = fuente.render(f"Ametralladora: {jugador.arma2_balas}/250", True, colores.WHITE)
-    
+    else:
+        municion = fuente.render(f"Escopeta: {jugador.arma3_balas}/60", True, colores.WHITE)
     pantalla.blit(municion, (0, 40))
     pygame.display.flip()    
     reloj.tick(constante.FPS)
+
+if not running and gameover:
+    pygame.mixer.music.stop()    
 #Base de datos: insercion de datos(pedir nombre)
 nombre = input(" escribe tu nombre ")
 db.insertar(nombre, puntos)
 print("Tu puntuacion final es de: ", puntos)
-
 
 #Pantalla de gameover
 while gameover:
@@ -159,7 +249,10 @@ while gameover:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
                 gameover = False
-    
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                running = True
+                gameover = False
     
     
     pantalla.blit(fondo,(0,0))#Fondo estatico en la pantalla del fin del juego
