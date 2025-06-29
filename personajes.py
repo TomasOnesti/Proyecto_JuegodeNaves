@@ -1,42 +1,136 @@
-import pygame, random, constante
+import pygame, random, constante, time
 from armas import *
 pygame.init()
 #Clase del jugador
+
 class jugador():
     def __init__(self):
         self.ancho = 65
         self.alto = 65
-        self.size=(self.ancho, self.alto)#Tamaño jugador
-        self.imgnave = pygame.image.load("img/nave1_.png").convert_alpha()#Imagen de la nave(Jugador)
-        self.imgnave = pygame.transform.scale(self.imgnave, self.size)#Escala la imagen a un tamaño especifico
-        self.nave = pygame.Rect(80 - self.ancho -10, 
-            constante.ALTO // 2 - self.alto // 2, self.ancho, self.alto).inflate(-10,-8)#Hitbox de la nave
-        self.balas = []#Lista de almacenamiento de las balas
-        #Funcion de movimiento
+        self.size = (self.ancho, self.alto)
+
+        # Imágenes
+        self.img_normal = pygame.image.load("img/nave1_.png").convert_alpha()
+        self.img_arma2 = pygame.image.load("img/nave3.png").convert_alpha()
+        self.img_actual = self.img_normal
+        self.img_actual = pygame.transform.scale(self.img_actual, self.size)
+
+        self.nave = pygame.Rect(80 - self.ancho - 10,
+                                constante.ALTO // 2 - self.alto // 2, self.ancho, self.alto).inflate(-10, -8)
+
+        # Arma 1
+        self.balas = []
+        self.tiempo_ultimo_disparo = 0
+        self.delay_disparo = 200
+        self.max_balas = 12
+        self.balas_restantes = self.max_balas
+        self.tiempo_recarga = 1000
+        self.esta_recargando = False
+        self.tiempo_inicio_recarga = 0
+
+        # Arma 2
+        self.arma2_balas = 250
+        self.arma = 1  
+        # Transición / inmortalidad
+        self.en_animacion = False
+        self.inmortal = False
+        self.tiempo_animacion = 0
+        self.duracion_animacion = 1000
+        self.duracion_inmortal = 1000
+
+    def iniciar_cambio_arma(self, nueva_arma):
+        self.en_animacion = True
+        self.inmortal = True
+        self.tiempo_animacion = pygame.time.get_ticks()
+        self.arma = nueva_arma
+
+    def actualizar_estado(self):
+        tiempo_actual = pygame.time.get_ticks()
+
+        # Finalizar animación
+        if self.en_animacion and tiempo_actual - self.tiempo_animacion > self.duracion_animacion:
+            self.en_animacion = False
+            self.tiempo_animacion = tiempo_actual  # Para contar el tiempo extra de invulnerabilidad
+
+            # Establecer imagen fija final
+            if self.arma == 1:
+                self.img_actual = pygame.transform.scale(self.img_normal, self.size)
+            else:
+                self.img_actual = pygame.transform.scale(self.img_arma2, self.size)
+
+        # Inmortalidad extra luego de la animación
+        if not self.en_animacion and self.inmortal:
+            if tiempo_actual - self.tiempo_animacion > self.duracion_inmortal:
+                self.inmortal = False
+
+        # Recarga arma 1
+        if self.arma == 1 and self.esta_recargando:
+            if tiempo_actual - self.tiempo_inicio_recarga >= self.tiempo_recarga:
+                self.esta_recargando = False
+                self.balas_restantes = self.max_balas
+
     def movimiento(self):
+        if self.en_animacion:
+            return  # Bloquea movimiento en animación
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and self.nave.left > 0:
-            self.nave.x -=4
+            self.nave.x -= 4
         if keys[pygame.K_RIGHT] and self.nave.right < constante.ANCHO:
-            self.nave.x +=4
+            self.nave.x += 4
         if keys[pygame.K_DOWN] and self.nave.bottom < constante.ALTO:
-            self.nave.y +=4
+            self.nave.y += 4
         if keys[pygame.K_UP] and self.nave.top > 0:
-            self.nave.y -=4
-            
+            self.nave.y -= 4
+
     def disparar(self):
-        # Coordenadas de los cañones
-        offset_y = 34  # Separación vertical del centro
-        izquierda_x = self.nave.left + 34
-        derecha_x = self.nave.right - 34
-        centro_y = self.nave.centery
+        tiempo_actual = pygame.time.get_ticks()
 
-        # Crear dos balas desde los laterales de la nave
-        bala_izquierda = Balas(izquierda_x, centro_y - offset_y)
-        bala_derecha = Balas(derecha_x, centro_y + offset_y)
+        if self.arma == 1:
+            if self.esta_recargando:
+                return
+            if tiempo_actual - self.tiempo_ultimo_disparo < self.delay_disparo:
+                return
+            if self.balas_restantes > 0:
+                offset_y = 34
+                izquierda_x = self.nave.left + 34
+                derecha_x = self.nave.right - 34
+                centro_y = self.nave.centery
 
-        self.balas.append(bala_izquierda)
-        self.balas.append(bala_derecha)
+                bala_izquierda = Balas(izquierda_x, centro_y - offset_y)
+                bala_derecha = Balas(derecha_x, centro_y + offset_y)
+
+                self.balas.append(bala_izquierda)
+                self.balas.append(bala_derecha)
+
+                self.tiempo_ultimo_disparo = tiempo_actual
+                self.balas_restantes -= 1
+
+                if self.balas_restantes <= 0:
+                    self.esta_recargando = True
+                    self.tiempo_inicio_recarga = tiempo_actual
+
+        elif self.arma == 2:
+            if self.arma2_balas <= 0:
+                self.iniciar_cambio_arma(1)
+                return
+
+            if tiempo_actual - self.tiempo_ultimo_disparo :
+                centro_x = self.nave.centerx
+                centro_y = self.nave.centery
+                bala = Balas(centro_x, centro_y)
+                self.balas.append(bala)
+                self.tiempo_ultimo_disparo = tiempo_actual
+                self.arma2_balas -= 1
+
+    def render(self, pantalla):
+        """Mostrar la nave con animación parpadeante si está en transición."""
+        tiempo_actual = pygame.time.get_ticks()
+        mostrar = True
+        if self.en_animacion:
+            if (tiempo_actual // 150) % 2 == 0:
+                mostrar = False  # Hace parpadear
+        if mostrar:
+            pantalla.blit(self.img_actual, self.nave)
             
 #Clase de los meteoritos
 class meteoritos():

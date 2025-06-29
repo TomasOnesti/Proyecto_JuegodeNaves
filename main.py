@@ -91,7 +91,7 @@ while running:
                 jugador.disparar()
                 
     jugador.movimiento()#Funcion de movimiento del jugador
-    
+    jugador.actualizar_estado()
     #Fondo y mov. del Fondo
     xrelativa = x % fondo.get_rect().width
     pantalla.blit(fondo,[xrelativa - fondo.get_rect().width , 0])#cambio fondo a una imagen
@@ -102,7 +102,7 @@ while running:
     
     #Colicion con los meteoritos
     for met in meteorito.meteoritosl:
-        if jugador.nave.colliderect(met["rect"]):
+        if not jugador.inmortal and jugador.nave.colliderect(met["rect"]):
             running = False
             gameover = True
     #Muestra los meteoritos por pantalla
@@ -129,14 +129,20 @@ while running:
                     elif met["size_key"]=="chico":
                         puntos +=1
                 puntos += 2
+                if puntos >= 300 and jugador.arma != 2 and not jugador.en_animacion and jugador.arma2_balas > 0:
+                    jugador.iniciar_cambio_arma(2)
                 break
     #Pequeña muestra de puntaje en la esquina superior izquierda de la pantalla
     score = fuente.render(str(puntos), True, colores.WHITE) 
     pantalla.blit(score, (0, 0))
-    pantalla.blit(jugador.imgnave, jugador.nave)#Muestra al jugador por pantalla
+    jugador.render(pantalla)#Muestra al jugador por pantalla
     pygame.draw.rect(pantalla, colores.GREEN, jugador.nave, 2)
+    if jugador.arma == 1:
+        municion = fuente.render(f"Munición: {jugador.balas_restantes}", True, colores.WHITE)
+    else:
+        municion = fuente.render(f"Ametralladora: {jugador.arma2_balas}/250", True, colores.WHITE)
     
-
+    pantalla.blit(municion, (0, 40))
     pygame.display.flip()    
     reloj.tick(constante.FPS)
 #Base de datos: insercion de datos(pedir nombre)
