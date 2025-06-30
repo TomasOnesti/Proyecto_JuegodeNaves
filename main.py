@@ -3,12 +3,11 @@ import constante, personajes
 from armas import *
 pygame.init()
 while True:
-    #Variables importantes
+    #Variables importantes#
     reloj = pygame.time.Clock()#FPS
     fuente = constante.fuente_escalada(0.045)#Letra
-    codigo_activo = False
-    codigo_valido = False
-
+    
+    #Sonidos#
     pygame.mixer.music.load("elementos/audios/musica/musicadejuego.mp3")
     gameover_sound= pygame.mixer.Sound("elementos/audios/efectos/juego_terminado.mp3")
     muerte = pygame.mixer.Sound("elementos/audios/efectos/muerte.mp3")
@@ -24,12 +23,12 @@ while True:
     gameover_sound.set_volume(constante.musica)
     pygame.mixer.music.set_volume(constante.musica)
 
-    colores = constante.color()#colores
-    pantalla = pygame.display.set_mode(constante.tamaño)#tamaño de pantalla
-    fondo = pygame.image.load("elementos/assets/background/espacio3.png").convert()#Fondo
-    
-    jugador = personajes.jugador()#Jugador(Variable que almacena la clase jugador)
-    meteorito = personajes.meteoritos()#Meteoritos
+    colores = constante.color()
+    pantalla = pygame.display.set_mode(constante.tamaño)
+    fondo = pygame.image.load("elementos/assets/background/espacio3.png").convert()
+    #Personajes#
+    jugador = personajes.jugador()
+    meteorito = personajes.meteoritos()
     jefe = personajes.jefe()
     jefe_activo = False
     tiempo_muerte_jefe = None
@@ -37,9 +36,9 @@ while True:
     db= database.Ranking()
     enemigos = personajes.enemigo()
     dificultades = ["Fácil", "Normal", "Difícil"]
-    niveles_generacion = [2, 4, 6]  # meteoritos por cada dificultad
-    indice_dificultad = 1  # Por defecto "Normal"
-
+    niveles_generacion = [2, 4, 6]  
+    indice_dificultad = 1  
+    #Control de bucles
     running = False
     gameover = False
     inicio = True
@@ -58,7 +57,6 @@ while True:
     enemigos_a_remover = []
     balas_enemigas_a_remover = []
 
-    
     x=0#coordenada del fondo
     puntos=0 #Puntuacion inicial en 0
 
@@ -93,10 +91,7 @@ while True:
         dificultad_text = fuente.render(f"Dificultad: {dificultades[indice_dificultad]}", True, colores.BLACK)
         tamaño_text = fuente.render(f"Pantalla: {tamaños_pantalla[indice_tamaño][0]}x{tamaños_pantalla[indice_tamaño][1]}", True, colores.BLACK)
         ranking_text = fuente.render("Ver Ranking", True, colores.BLACK)
-        # boton_codigo = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 + 150, 200, 40)
-        # pygame.draw.rect(pantalla, colores.WHITE, boton_codigo, border_radius=8)
-        #codigo_text = fuente.render("Código", True, colores.BLACK)
-        #pantalla.blit(codigo_text, (boton_codigo.x + 60, boton_codigo.y + 5))
+        
         pantalla.blit(mute_text, (boton_mute.x + 10, boton_mute.y + 5))
         pantalla.blit(dificultad_text, (boton_dificultad.x + 10, boton_dificultad.y + 5))
         pantalla.blit(tamaño_text, (boton_tamaño.x + 10, boton_tamaño.y + 5))
@@ -146,29 +141,12 @@ while True:
                     constante.tamaño = tamaños_pantalla[indice_tamaño]
                     pantalla = pygame.display.set_mode(constante.tamaño)
                     fuente = constante.fuente_escalada(0.045)
-                # if boton_codigo.collidepoint(event.pos):
-                #     codigo_activo = True
-                #     inicio = False
                 if boton_ranking.collidepoint(event.pos):
                     constante.mostrar_ranking(pantalla, colores, fuente, fondo, db)
         pygame.display.flip()
         reloj.tick(constante.FPS)
+        
     #Bucle donde se ejecuta el juego
-    
-    # if codigo_activo:
-    #     codigo_ingresado = constante.pedir_codigo(pantalla, colores, fuente, fondo)
-    #     if codigo_ingresado.lower() == "Castlevania":
-    #         codigo_valido = True
-    #         pygame.mixer.music.load("elementos/audios/musica/Musicgame.mp3")  
-    #         pygame.mixer.music.set_volume(constante.musica)
-    #         pygame.mixer.music.play(-1)
-    #     else:
-    #         # código incorrecto
-    #         pygame.mixer.music.load("elementos/audios/musica/musicadejuego.mp3")
-    #         pygame.mixer.music.set_volume(constante.musica)
-    #     codigo_activo = False
-    #     running = True
-    
     while running:
         pantalla.fill(constante.color().BLACK)
         #cerrar el juego
