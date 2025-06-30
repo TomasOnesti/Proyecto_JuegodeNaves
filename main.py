@@ -12,7 +12,7 @@ while True:
     fuente = constante.fuente_escalada(0.045)#Letra
     
     #Sonidos#
-    pygame.mixer.music.load(constante.resource_path("elementos/audios/musica/musicadejuego.mp3"))
+    pygame.mixer.music.load(constante.resource_path("elementos/audios/musica/Musicgame.mp3"))
     gameover_sound= pygame.mixer.Sound(constante.resource_path("elementos/audios/efectos/juego_terminado.mp3"))
     muerte = pygame.mixer.Sound(constante.resource_path("elementos/audios/efectos/muerte.mp3"))
     muerte.set_volume(constante.efecto)
