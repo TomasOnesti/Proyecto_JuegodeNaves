@@ -10,9 +10,9 @@ class jugador():
         self.size = (self.ancho, self.alto)
 
         # Imágenes
-        self.img_normal = pygame.image.load("elementos/assets/player/nave1_.png").convert_alpha()
-        self.img_arma2 = pygame.image.load("elementos/assets/player/nave3.png").convert_alpha()
-        self.img_arma3 = pygame.image.load("elementos/assets/player/nave4.png").convert_alpha()
+        self.img_normal = pygame.image.load(constante.resource_path("elementos/assets/player/nave1_.png")).convert_alpha()
+        self.img_arma2 = pygame.image.load(constante.resource_path("elementos/assets/player/nave3.png")).convert_alpha()
+        self.img_arma3 = pygame.image.load(constante.resource_path("elementos/assets/player/nave4.png")).convert_alpha()
         self.img_actual = self.img_normal
         self.img_actual = pygame.transform.scale(self.img_actual, self.size)
 
@@ -160,8 +160,8 @@ class jugador():
 #Clase de los meteoritos
 class meteoritos():
     def __init__(self):
-        self.imgmeteorito = pygame.image.load("elementos/assets/enemigos/meteorito1.png").convert_alpha()#Imagen de los meteoritos
-        self.imgmeteorito2= pygame.image.load("elementos/assets/enemigos/meteorito_2.png").convert_alpha()
+        self.imgmeteorito = pygame.image.load(constante.resource_path("elementos/assets/enemigos/meteorito1.png")).convert_alpha()#Imagen de los meteoritos
+        self.imgmeteorito2= pygame.image.load(constante.resource_path("elementos/assets/enemigos/meteorito_2.png")).convert_alpha()
         self.meteoros={
             "meteorobase":(60,70),
             "tamanios": {
@@ -251,7 +251,7 @@ class meteoritos():
     
 class enemigo():
     def __init__(self):
-        self.enemigo =pygame.image.load("elementos/assets/enemigos/enemigo1.png")
+        self.enemigo =pygame.image.load(constante.resource_path("elementos/assets/enemigos/enemigo1.png"))
         self.ancho_enemigo = 70
         self.alto_enemigo = 70
         self.size_enemigo = (self.alto_enemigo, self.ancho_enemigo)
@@ -315,7 +315,7 @@ class enemigo():
                 
 class jefe():
     def __init__(self):
-        self.imgjefe = pygame.image.load("elementos/assets/enemigos/jefe.png").convert_alpha()
+        self.imgjefe = pygame.image.load(constante.resource_path("elementos/assets/enemigos/jefe.png")).convert_alpha()
         self.ancho = 350
         self.alto = 250
         self.vida = 2000

@@ -1,5 +1,7 @@
 import pygame, json
 import database
+import sys
+import os
 ANCHO = 1000#Ancho de la pantalla
 ALTO = 700#Alto de la pantalla
 FPS = 300#Cantidad de Frame por Segundo 
@@ -13,6 +15,16 @@ def fuente_escalada(porcentaje=0.05):
     # Usa un porcentaje de la altura de pantalla para determinar el tamaño
     tamaño = int(ALTO * porcentaje)
     return pygame.font.Font(None, tamaño)
+
+def resource_path(relative_path):
+    try:
+        # Si se ejecuta desde un .exe hecho con PyInstaller
+        base_path = sys._MEIPASS
+    except AttributeError:
+        # Si se ejecuta como script normal
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 def pedir_codigo(pantalla, colores, fuente, fondo):
         texto = ""

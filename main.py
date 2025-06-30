@@ -1,31 +1,35 @@
 import pygame, database
 import constante, personajes
 from armas import *
+
 pygame.init()
+
+
+
 while True:
     #Variables importantes#
     reloj = pygame.time.Clock()#FPS
     fuente = constante.fuente_escalada(0.045)#Letra
     
     #Sonidos#
-    pygame.mixer.music.load("elementos/audios/musica/musicadejuego.mp3")
-    gameover_sound= pygame.mixer.Sound("elementos/audios/efectos/juego_terminado.mp3")
-    muerte = pygame.mixer.Sound("elementos/audios/efectos/muerte.mp3")
+    pygame.mixer.music.load(constante.resource_path("elementos/audios/musica/musicadejuego.mp3"))
+    gameover_sound= pygame.mixer.Sound(constante.resource_path("elementos/audios/efectos/juego_terminado.mp3"))
+    muerte = pygame.mixer.Sound(constante.resource_path("elementos/audios/efectos/muerte.mp3"))
     muerte.set_volume(constante.efecto)
-    disparo1_sound= pygame.mixer.Sound("elementos/audios/efectos/disparoefecto1.mp3")
+    disparo1_sound= pygame.mixer.Sound(constante.resource_path("elementos/audios/efectos/disparoefecto1.mp3"))
     disparo1_sound.set_volume(constante.efecto)
-    disparo2_sound = pygame.mixer.Sound("elementos/audios/efectos/disparoefecto2.mp3")
+    disparo2_sound = pygame.mixer.Sound(constante.resource_path("elementos/audios/efectos/disparoefecto2.mp3"))
     disparo2_sound.set_volume(constante.efecto)
-    disparo3_sound = pygame.mixer.Sound("elementos/audios/efectos/disparoefecto3.mp3")
+    disparo3_sound = pygame.mixer.Sound(constante.resource_path("elementos/audios/efectos/disparoefecto3.mp3"))
     disparo3_sound.set_volume(constante.efecto)
-    disparo_enemigo= pygame.mixer.Sound("elementos/audios/efectos/disparoenemigo.mp3")
+    disparo_enemigo= pygame.mixer.Sound(constante.resource_path("elementos/audios/efectos/disparoenemigo.mp3"))
     disparo_enemigo.set_volume(constante.efecto)
     gameover_sound.set_volume(constante.musica)
     pygame.mixer.music.set_volume(constante.musica)
 
     colores = constante.color()
     pantalla = pygame.display.set_mode(constante.tamaño)
-    fondo = pygame.image.load("elementos/assets/background/espacio3.png").convert()
+    fondo = pygame.image.load(constante.resource_path("elementos/assets/background/espacio3.png")).convert()
     #Personajes#
     jugador = personajes.jugador()
     meteorito = personajes.meteoritos()
