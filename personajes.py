@@ -35,7 +35,7 @@ class jugador():
         
         #Arma 3
         self.arma3_balas = 60
-        self.delay_disparo2 = 400
+        self.delay_disparo2 = 600
         # Transición / inmortalidad
         self.en_animacion = False
         self.inmortal = False
@@ -283,14 +283,14 @@ class enemigo():
                 if rect.x <= constante.ANCHO // 2:
                     enemigo["estado"] = "retrocediendo"
             elif enemigo["estado"] == "retrocediendo":
-                rect.x += 2
+                rect.x += 1
                 if rect.x >= constante.ANCHO - self.ancho_enemigo:
                     enemigo["estado"] = "saliendo"
             elif enemigo["estado"] == "saliendo":
                 if enemigo["direccion_y"] == "arriba":
-                    rect.y -= 3
+                    rect.y -= 2
                 else:
-                    rect.y += 3
+                    rect.y += 2
             
             if rect.bottom < 0 or rect.top > constante.ALTO:
                 self.lista_enemigos.remove(enemigo)
@@ -312,3 +312,53 @@ class enemigo():
             bala.mover()
             if bala.rect.right < 0:
                 self.lista_balas_enemigas.remove(bala)
+                
+class jefe():
+    def __init__(self):
+        self.imgjefe = pygame.image.load("elementos/assets/enemigos/jefe.png").convert_alpha()
+        self.ancho = 350
+        self.alto = 250
+        self.vida = 2000
+        
+        self.size = (self.ancho,self.alto)
+        self.imgjefe = pygame.transform.scale(self.imgjefe, self.size)
+        self.rect = pygame.Rect(constante.ANCHO - self.ancho - 150, constante.ALTO // 2 - self.alto // 2, self.ancho, self.alto)
+
+        
+        self.velocidad_y = 1
+        self.direccion = 1
+        
+        self.lista_balas = []
+        self.delay_disparo = 1000  
+        self.separacion_doble = 4  
+        self.distancia_entre_cañones = 80
+        self.tiempo_ultimo_disparo = pygame.time.get_ticks()
+    
+    def mover(self):
+        self.rect.y += self.velocidad_y * self.direccion
+        if self.rect.top <= 0 or self.rect.bottom >= constante.ALTO:
+            self.direccion *= -1
+    
+    def disparar(self):
+        tiempo_actual = pygame.time.get_ticks()
+        if tiempo_actual - self.tiempo_ultimo_disparo >= self.delay_disparo:
+            cañones = [
+                {"y": self.rect.top + 8, "x_offset": 118},   # cañón superior 
+                {"y": self.rect.top + -10 + self.distancia_entre_cañones, "x_offset": 50},  # intermedio superior
+                {"y": self.rect.top + 25 + self.distancia_entre_cañones * 2, "x_offset": 50},  # intermedio inferior
+                {"y": self.rect.top + -2 + self.distancia_entre_cañones * 3, "x_offset": 120}   # cañón inferior 
+            ]
+
+            for cañon in cañones:
+                x = self.rect.left + cañon["x_offset"] + 50  # +50 para compensar que el jefe es más ancho ahora
+                y1 = cañon["y"] - self.separacion_doble
+                y2 = cañon["y"] + self.separacion_doble
+                self.lista_balas.append(BalaEnemiga(x, y1))
+                self.lista_balas.append(BalaEnemiga(x, y2))
+
+            self.tiempo_ultimo_disparo = tiempo_actual
+            
+    def render(self, pantalla):
+        pantalla.blit(self.imgjefe, self.rect)
+        pygame.draw.rect(pantalla, (255, 0, 0), self.rect, 2)
+        

@@ -3,7 +3,7 @@ ALTO = 700#Alto de la pantalla
 FPS = 300#Cantidad de Frame por Segundo 
 tamaño =(ANCHO, ALTO) #Tamaño de la pantalla
 efecto=0.4
-musica =0.5
+musica =0.7
 
 #Clase con colores para usar
 class color:
