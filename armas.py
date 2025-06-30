@@ -14,7 +14,7 @@ class BalaEnemiga():
     def __init__(self, x, y):
         self.ancho = 6
         self.alto = 4
-        self.color = constante.color.BLUE
+        self.color = constante.color.YELLOW
         self.rect = pygame.Rect(x, y, self.ancho, self.alto)
 
     def mover(self):
