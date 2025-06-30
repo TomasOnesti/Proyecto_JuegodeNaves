@@ -192,7 +192,7 @@ while True:
         #Muestra los meteoritos por pantalla
         for met in meteorito.meteoritosl:
             pantalla.blit(met["img"], met["rect"])
-            pygame.draw.rect(pantalla, colores.RED, met["rect"], 2)#Muestra hitbox
+            #pygame.draw.rect(pantalla, colores.RED, met["rect"], 2)#Muestra hitbox
         #Mover y mostrar las balas del jugador
         for bala in jugador.balas[:]:
             bala.mover()
@@ -268,7 +268,6 @@ while True:
                 meteorito.meteoritosl.clear()
             else:
                 for bala in jefe.lista_balas:
-                    pygame.draw.rect(pantalla, bala.color, bala.rect)
                     bala.mover()
                     if not jugador.inmortal and bala.rect.colliderect(jugador.nave):
                         gameover_sound.play()
@@ -280,7 +279,7 @@ while True:
         
         for ene in enemigos.lista_enemigos:
             pantalla.blit(enemigos.img_enemigo, ene["rect"])
-            pygame.draw.rect(pantalla, colores.RED, ene["rect"], 2)  # hitbox opcional
+            #pygame.draw.rect(pantalla, colores.RED, ene["rect"], 2)  # hitbox opcional
 
         for bala in enemigos.lista_balas_enemigas:
             pygame.draw.rect(pantalla, bala.color, bala.rect)
@@ -315,7 +314,6 @@ while True:
         score = fuente.render(str(puntos), True, colores.WHITE) 
         pantalla.blit(score, (constante.ANCHO * 0.01, constante.ALTO * 0.01))
         jugador.render(pantalla)#Muestra al jugador por pantalla
-        pygame.draw.rect(pantalla, colores.GREEN, jugador.nave, 2)
         if jugador.arma == 1:
             municion = fuente.render(f"Munición: {jugador.balas_restantes}", True, colores.WHITE)
         elif jugador.arma == 2:

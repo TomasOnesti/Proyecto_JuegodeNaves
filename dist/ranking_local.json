@@ -1,10 +1,22 @@
 [
     {
-        "usuario": "zzz",
-        "puntaje": 47
+        "usuario": "Free",
+        "puntaje": 0
+    },
+    {
+        "usuario": "F",
+        "puntaje": 52
+    },
+    {
+        "usuario": "GOOOOOD",
+        "puntaje": 136
+    },
+    {
+        "usuario": "\u00f1",
+        "puntaje": 14
     },
     {
         "usuario": "Tomas",
-        "puntaje": 89
+        "puntaje": 192
     }
 ]
