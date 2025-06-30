@@ -18,4 +18,4 @@ class BalaEnemiga():
         self.rect = pygame.Rect(x, y, self.ancho, self.alto)
 
     def mover(self):
-        self.rect.x -= 2.5  # Va hacia la izquierda
+        self.rect.x -= 2.8  # Va hacia la izquierda

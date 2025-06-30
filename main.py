@@ -6,6 +6,8 @@ while True:
     #Variables importantes
     reloj = pygame.time.Clock()#FPS
     fuente = constante.fuente_escalada(0.045)#Letra
+    codigo_activo = False
+    codigo_valido = False
 
     pygame.mixer.music.load("elementos/audios/musica/musicadejuego.mp3")
     gameover_sound= pygame.mixer.Sound("elementos/audios/efectos/juego_terminado.mp3")
@@ -49,14 +51,14 @@ while True:
 
     tamaños_pantalla = [(800, 600), (1000, 700), (1200, 800)]
     indice_tamaño = 1  # Por defecto tamaño medio
-    muteado = False
+    nivel_mute = 0
 
     balas_a_remover = []
     meteoritos_a_remover = []
     enemigos_a_remover = []
     balas_enemigas_a_remover = []
 
-
+    
     x=0#coordenada del fondo
     puntos=0 #Puntuacion inicial en 0
 
@@ -85,10 +87,15 @@ while True:
         pygame.draw.rect(pantalla, colores.WHITE, boton_dificultad, border_radius=8)
         pygame.draw.rect(pantalla, colores.WHITE, boton_tamaño, border_radius=8)
 
-        mute_text = fuente.render(f"Mute: {'Sí' if muteado else 'No'}", True, colores.BLACK)
+        estados_mute = ["No", "Música", "Todo"]
+        mute_text = fuente.render(f"Mute: {estados_mute[nivel_mute]}", True, colores.BLACK)
         dificultad_text = fuente.render(f"Dificultad: {dificultades[indice_dificultad]}", True, colores.BLACK)
         tamaño_text = fuente.render(f"Pantalla: {tamaños_pantalla[indice_tamaño][0]}x{tamaños_pantalla[indice_tamaño][1]}", True, colores.BLACK)
+        boton_codigo = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 + 150, 200, 40)
+        pygame.draw.rect(pantalla, colores.WHITE, boton_codigo, border_radius=8)
 
+        codigo_text = fuente.render("Código", True, colores.BLACK)
+        pantalla.blit(codigo_text, (boton_codigo.x + 60, boton_codigo.y + 5))
         pantalla.blit(mute_text, (boton_mute.x + 10, boton_mute.y + 5))
         pantalla.blit(dificultad_text, (boton_dificultad.x + 10, boton_dificultad.y + 5))
         pantalla.blit(tamaño_text, (boton_tamaño.x + 10, boton_tamaño.y + 5))
@@ -104,7 +111,32 @@ while True:
                     pygame.mixer.music.play(-1)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if boton_mute.collidepoint(event.pos):
-                    muteado = not muteado  # Todavía no afecta la música
+                    nivel_mute = (nivel_mute + 1) % 3  # rota entre 0,1,2
+
+                    if nivel_mute == 0:
+                        pygame.mixer.music.set_volume(constante.musica)
+                        gameover_sound.set_volume(constante.musica)
+                        disparo1_sound.set_volume(constante.efecto)
+                        disparo2_sound.set_volume(constante.efecto)
+                        disparo3_sound.set_volume(constante.efecto)
+                        disparo_enemigo.set_volume(constante.efecto)
+                        muerte.set_volume(constante.efecto)
+                    elif nivel_mute == 1:
+                        pygame.mixer.music.set_volume(0)  # solo música
+                        gameover_sound.set_volume(constante.musica)
+                        disparo1_sound.set_volume(constante.efecto)
+                        disparo2_sound.set_volume(constante.efecto)
+                        disparo3_sound.set_volume(constante.efecto)
+                        disparo_enemigo.set_volume(constante.efecto)
+                        muerte.set_volume(constante.efecto)
+                    elif nivel_mute == 2:
+                        pygame.mixer.music.set_volume(0)
+                        gameover_sound.set_volume(0)
+                        disparo1_sound.set_volume(0)
+                        disparo2_sound.set_volume(0)
+                        disparo3_sound.set_volume(0)
+                        disparo_enemigo.set_volume(0)
+                        muerte.set_volume(0)
                 if boton_dificultad.collidepoint(event.pos):
                     indice_dificultad = (indice_dificultad + 1) % len(dificultades)
                 if boton_tamaño.collidepoint(event.pos):
@@ -113,10 +145,28 @@ while True:
                     constante.tamaño = tamaños_pantalla[indice_tamaño]
                     pantalla = pygame.display.set_mode(constante.tamaño)
                     fuente = constante.fuente_escalada(0.045)
+                if boton_codigo.collidepoint(event.pos):
+                    codigo_activo = True
+                    inicio = False
 
         pygame.display.flip()
         reloj.tick(constante.FPS)
     #Bucle donde se ejecuta el juego
+    
+    if codigo_activo:
+        codigo_ingresado = constante.pedir_codigo(pantalla, colores, fuente, fondo)
+        if codigo_ingresado.lower() == "Castlevania":
+            codigo_valido = True
+            pygame.mixer.music.load("elementos/audios/musica/Musicgame.mp3")  
+            pygame.mixer.music.set_volume(constante.musica)
+            pygame.mixer.music.play(-1)
+        else:
+            # código incorrecto
+            pygame.mixer.music.load("elementos/audios/musica/musicadejuego.mp3")
+            pygame.mixer.music.set_volume(constante.musica)
+        codigo_activo = False
+        running = True
+    
     while running:
         pantalla.fill(constante.color().BLACK)
         #cerrar el juego
@@ -179,10 +229,10 @@ while True:
                         nuevos_meteoritos = meteorito.dividir_meteoritos(met)
                         meteorito.meteoritosl.extend(nuevos_meteoritos)
                         if met["size_key"] == "grande":
-                            puntos += 3
+                            puntos += 5
                         elif met["size_key"] == "chico":
-                            puntos += 100
-                    puntos += 200
+                            puntos += 2
+                    puntos += 3
                     
                     for activar in activar_arma:
                         if puntos >= activar and activar not in arma2_disparadores:
@@ -264,7 +314,7 @@ while True:
                         balas_a_remover.append(bala)
                     if ene not in enemigos_a_remover:
                         enemigos_a_remover.append(ene)
-                    puntos +=3
+                    puntos +=4
     
         for ene in enemigos_a_remover:
             if ene in enemigos.lista_enemigos:
