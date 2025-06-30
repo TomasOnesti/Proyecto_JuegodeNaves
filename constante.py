@@ -57,7 +57,6 @@ def pedir_codigo(pantalla, colores, fuente, fondo):
 
         return texto
 
-
 def mostrar_ranking(pantalla, colores, fuente, fondo, db):
     with open(db.archivo, 'r') as f:
         datos = json.load(f)
