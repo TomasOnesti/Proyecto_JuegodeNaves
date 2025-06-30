@@ -1,10 +1,13 @@
-import pygame
+import pygame, json
+import database
 ANCHO = 1000#Ancho de la pantalla
 ALTO = 700#Alto de la pantalla
 FPS = 300#Cantidad de Frame por Segundo 
 tamaño =(ANCHO, ALTO) #Tamaño de la pantalla
 efecto=0.4
 musica =0.7
+
+db=database.Ranking()
 
 def fuente_escalada(porcentaje=0.05):
     # Usa un porcentaje de la altura de pantalla para determinar el tamaño
@@ -42,6 +45,49 @@ def pedir_codigo(pantalla, colores, fuente, fondo):
 
         return texto
 
+
+def mostrar_ranking(pantalla, colores, fuente, fondo, db):
+    with open(db.archivo, 'r') as f:
+        datos = json.load(f)
+
+    datos = sorted(datos, key=lambda x: x['puntaje'], reverse=True)[:10]
+
+    salir = False
+    while not salir:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    salir = True
+
+        pantalla.blit(fondo, (0, 0))
+
+        # Fondo negro transparente
+        overlay = pygame.Surface((ANCHO * 0.8, ALTO * 0.8))
+        overlay.set_alpha(180)
+        overlay.fill(colores.BLACK)
+        pantalla.blit(overlay, (ANCHO * 0.1, ALTO * 0.1))
+
+        # Título
+        fuente_titulo = fuente_escalada(0.06)
+        titulo = fuente_titulo.render("Ranking", True, colores.YELLOW)
+        pantalla.blit(titulo, titulo.get_rect(center=(ANCHO/2, ALTO * 0.15)))
+
+        # Mostrar rankings
+        fuente_ranking = fuente_escalada(0.045)
+        for i, entrada in enumerate(datos):
+            texto = f"{i+1}. {entrada['usuario']}: {entrada['puntaje']}"
+            render = fuente_ranking.render(texto, True, colores.WHITE)
+            pantalla.blit(render, (ANCHO * 0.15, ALTO * 0.22 + i * 40))
+
+        # Instrucción para salir
+        instruccion = fuente.render("Presiona ESC para volver", True, colores.WHITE)
+        pantalla.blit(instruccion, (ANCHO/2 - instruccion.get_width()/2, ALTO * 0.9))
+
+        pygame.display.flip()
+        pygame.time.Clock().tick(30)
 
 #Clase con colores para usar
 class color:

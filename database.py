@@ -1,19 +1,18 @@
-import mysql.connector
+import json
+import os
 #Base de datos: Insert score and username
-class ranking():
-    def __init__(self):
-        self.ranking = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="ranking"
-        )
-        self.mycursor = self.ranking.cursor()
-    #Funcion insertar(inserta a la base de datos)
+class Ranking:
+    def __init__(self, archivo="ranking_local.json"):
+        self.archivo = archivo
+        if not os.path.exists(self.archivo):
+            with open(self.archivo, 'w') as f:
+                json.dump([], f)
+                
     def insertar(self, nombre, puntaje):
-        sql = "INSERT INTO usuario (usuario, puntaje) VALUES (%s, %s)"
-        val = (nombre, puntaje)
-        self.mycursor.execute(sql, val)
+        with open(self.archivo, 'r') as f:
+            datos = json.load(f)
 
-        self.ranking.commit()
-        print(self.mycursor.rowcount, "record inserted.")
+        datos.append({"usuario": nombre, "puntaje": puntaje})
+
+        with open(self.archivo, 'w') as f:
+            json.dump(datos, f, indent=4)

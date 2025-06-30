@@ -34,7 +34,7 @@ while True:
     jefe_activo = False
     tiempo_muerte_jefe = None
     
-    db= database.ranking()
+    db= database.Ranking()
     enemigos = personajes.enemigo()
     dificultades = ["Fácil", "Normal", "Difícil"]
     niveles_generacion = [2, 4, 6]  # meteoritos por cada dificultad
@@ -82,24 +82,25 @@ while True:
         boton_mute = pygame.Rect(x_boton, constante.ALTO * 0.45, ancho_boton, alto_boton)
         boton_dificultad = pygame.Rect(x_boton, constante.ALTO * 0.55, ancho_boton, alto_boton)
         boton_tamaño = pygame.Rect(x_boton, constante.ALTO * 0.65, ancho_boton, alto_boton)
-
+        boton_ranking = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 + 200, 200, 40)
         pygame.draw.rect(pantalla, colores.WHITE, boton_mute, border_radius=8)
         pygame.draw.rect(pantalla, colores.WHITE, boton_dificultad, border_radius=8)
         pygame.draw.rect(pantalla, colores.WHITE, boton_tamaño, border_radius=8)
-
+        pygame.draw.rect(pantalla, colores.WHITE, boton_ranking, border_radius=8)
+        
         estados_mute = ["No", "Música", "Todo"]
         mute_text = fuente.render(f"Mute: {estados_mute[nivel_mute]}", True, colores.BLACK)
         dificultad_text = fuente.render(f"Dificultad: {dificultades[indice_dificultad]}", True, colores.BLACK)
         tamaño_text = fuente.render(f"Pantalla: {tamaños_pantalla[indice_tamaño][0]}x{tamaños_pantalla[indice_tamaño][1]}", True, colores.BLACK)
-        boton_codigo = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 + 150, 200, 40)
-        pygame.draw.rect(pantalla, colores.WHITE, boton_codigo, border_radius=8)
-
-        codigo_text = fuente.render("Código", True, colores.BLACK)
-        pantalla.blit(codigo_text, (boton_codigo.x + 60, boton_codigo.y + 5))
+        ranking_text = fuente.render("Ver Ranking", True, colores.BLACK)
+        # boton_codigo = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 + 150, 200, 40)
+        # pygame.draw.rect(pantalla, colores.WHITE, boton_codigo, border_radius=8)
+        #codigo_text = fuente.render("Código", True, colores.BLACK)
+        #pantalla.blit(codigo_text, (boton_codigo.x + 60, boton_codigo.y + 5))
         pantalla.blit(mute_text, (boton_mute.x + 10, boton_mute.y + 5))
         pantalla.blit(dificultad_text, (boton_dificultad.x + 10, boton_dificultad.y + 5))
         pantalla.blit(tamaño_text, (boton_tamaño.x + 10, boton_tamaño.y + 5))
-
+        pantalla.blit(ranking_text, (boton_ranking.x + 40, boton_ranking.y + 5))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -145,27 +146,28 @@ while True:
                     constante.tamaño = tamaños_pantalla[indice_tamaño]
                     pantalla = pygame.display.set_mode(constante.tamaño)
                     fuente = constante.fuente_escalada(0.045)
-                if boton_codigo.collidepoint(event.pos):
-                    codigo_activo = True
-                    inicio = False
-
+                # if boton_codigo.collidepoint(event.pos):
+                #     codigo_activo = True
+                #     inicio = False
+                if boton_ranking.collidepoint(event.pos):
+                    constante.mostrar_ranking(pantalla, colores, fuente, fondo, db)
         pygame.display.flip()
         reloj.tick(constante.FPS)
     #Bucle donde se ejecuta el juego
     
-    if codigo_activo:
-        codigo_ingresado = constante.pedir_codigo(pantalla, colores, fuente, fondo)
-        if codigo_ingresado.lower() == "Castlevania":
-            codigo_valido = True
-            pygame.mixer.music.load("elementos/audios/musica/Musicgame.mp3")  
-            pygame.mixer.music.set_volume(constante.musica)
-            pygame.mixer.music.play(-1)
-        else:
-            # código incorrecto
-            pygame.mixer.music.load("elementos/audios/musica/musicadejuego.mp3")
-            pygame.mixer.music.set_volume(constante.musica)
-        codigo_activo = False
-        running = True
+    # if codigo_activo:
+    #     codigo_ingresado = constante.pedir_codigo(pantalla, colores, fuente, fondo)
+    #     if codigo_ingresado.lower() == "Castlevania":
+    #         codigo_valido = True
+    #         pygame.mixer.music.load("elementos/audios/musica/Musicgame.mp3")  
+    #         pygame.mixer.music.set_volume(constante.musica)
+    #         pygame.mixer.music.play(-1)
+    #     else:
+    #         # código incorrecto
+    #         pygame.mixer.music.load("elementos/audios/musica/musicadejuego.mp3")
+    #         pygame.mixer.music.set_volume(constante.musica)
+    #     codigo_activo = False
+    #     running = True
     
     while running:
         pantalla.fill(constante.color().BLACK)
