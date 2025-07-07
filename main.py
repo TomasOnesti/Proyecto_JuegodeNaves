@@ -26,7 +26,8 @@ while True:
     disparo_enemigo.set_volume(constante.efecto)
     gameover_sound.set_volume(constante.musica)
     pygame.mixer.music.set_volume(constante.musica)
-
+    
+    inicio_de_juego = pygame.time.get_ticks()
     colores = constante.color()
     pantalla = pygame.display.set_mode(constante.tamaño)
     fondo = pygame.image.load(constante.resource_path("elementos/assets/background/espacio3.png")).convert()
@@ -41,7 +42,7 @@ while True:
     enemigos = personajes.enemigo()
     dificultades = ["Fácil", "Normal", "Difícil"]
     niveles_generacion = [2, 4, 6]  
-    indice_dificultad = 1  
+    indice_dificultad = 0  
     #Control de bucles
     running = False
     gameover = False
@@ -63,6 +64,11 @@ while True:
 
     x=0#coordenada del fondo
     puntos=0 #Puntuacion inicial en 0
+    def pasaron_10_segundos(tiempo_inicio):
+        return pygame.time.get_ticks() - tiempo_inicio >= 10000
+     
+    def pasaron_20_segundos(tiempo_inicio):
+        return pygame.time.get_ticks() - tiempo_inicio>=20000
 
     #Bucle de pantalla de inicio
     while inicio: 
@@ -91,7 +97,7 @@ while True:
         pygame.draw.rect(pantalla, colores.WHITE, boton_ranking, border_radius=8)
         
         estados_mute = ["No", "Música", "Todo"]
-        mute_text = fuente.render(f"Mute: {estados_mute[nivel_mute]}", True, colores.BLACK)
+        mute_text = fuente.render(f"Silenciar: {estados_mute[nivel_mute]}", True, colores.BLACK)
         dificultad_text = fuente.render(f"Dificultad: {dificultades[indice_dificultad]}", True, colores.BLACK)
         tamaño_text = fuente.render(f"Pantalla: {tamaños_pantalla[indice_tamaño][0]}x{tamaños_pantalla[indice_tamaño][1]}", True, colores.BLACK)
         ranking_text = fuente.render("Ver Ranking", True, colores.BLACK)
@@ -152,6 +158,7 @@ while True:
         
     #Bucle donde se ejecuta el juego
     while running:
+       
         pantalla.fill(constante.color().BLACK)
         #cerrar el juego
         for event in pygame.event.get():
@@ -180,8 +187,12 @@ while True:
         pantalla.blit(fondo,[xrelativa - fondo.get_rect().width , 0])#cambio fondo a una imagen
         if(xrelativa < constante.ANCHO):
             pantalla.blit(fondo,[xrelativa, 0])
-        x -= 1        
-        meteorito.funcionesmeteorito(niveles_generacion, indice_dificultad) #Movimiento y generacion de los meteoritos
+        x -= 1   
+             
+        if pasaron_10_segundos(inicio_de_juego):
+            meteorito.funcionesmeteorito(niveles_generacion, indice_dificultad) #Movimiento y generacion de los meteoritos
+        else:
+            pass
         
         #Colicion con los meteoritos
         for met in meteorito.meteoritosl:
@@ -275,7 +286,7 @@ while True:
                         gameover = True
                 jefe.render(pantalla)
     #Enemigos    
-        enemigos.mover_y_disparar()
+        
         
         for ene in enemigos.lista_enemigos:
             pantalla.blit(enemigos.img_enemigo, ene["rect"])
@@ -283,7 +294,7 @@ while True:
 
         for bala in enemigos.lista_balas_enemigas:
             pygame.draw.rect(pantalla, bala.color, bala.rect)
-        
+            
         for bala in enemigos.lista_balas_enemigas[:]:
             if not jugador.inmortal and bala.rect.colliderect(jugador.nave):
                 gameover_sound.play()
@@ -303,10 +314,13 @@ while True:
             if ene in enemigos.lista_enemigos:
                 muerte.play()
                 enemigos.lista_enemigos.remove(ene)
-        
-        if len(enemigos.lista_enemigos) == 0:
-            enemigos.lista_balas_enemigas.clear()
-            enemigos.crear_enemigos(niveles_generacion, indice_dificultad)
+        if pasaron_20_segundos(inicio_de_juego): 
+            enemigos.mover_y_disparar()
+            if len(enemigos.lista_enemigos) == 0:
+                enemigos.lista_balas_enemigas.clear()
+                enemigos.crear_enemigos(niveles_generacion, indice_dificultad)
+        else:
+            pass
         
         if len(enemigos.lista_enemigos) == 0:
             enemigos.crear_enemigos(niveles_generacion, indice_dificultad)

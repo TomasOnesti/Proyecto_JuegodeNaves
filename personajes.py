@@ -170,16 +170,17 @@ class meteoritos():
                 "chico":(40,40)
             },
             "velocidades":{
-                "lento": 0.5,
-                "medio": 2,
-                "rapido":3.5
+                "lento": 1.6,
+                "medio": 2.3,
+                "rapido":2.8
             }
         }
         self.size_met1=(self.meteoros["meteorobase"][0], self.meteoros["meteorobase"][1])#Tamaño de los meteoritos
         self.imgmeteorito = pygame.transform.scale(self.imgmeteorito, self.size_met1)#Escala la imagen a un tamaño especifico
+        self.contador=0
         self.meteoritosl =[]#Lista para almacenar los meteoritos
         #Funciones del meteorito
-        
+     
     def generar_meteorito1(self):
         #Generacion Meteoritos normales
         tamaño = self.meteoros["meteorobase"]
@@ -193,15 +194,15 @@ class meteoritos():
     def generar_meteoritos2(self):
         #generar meteoritos divisibles
         tamaño = self.meteoros["tamanios"]["grande"]
-        velocidad = self.meteoros["velocidades"]["medio"]
         rect = pygame.Rect(950, random.randint(0, constante.ALTO - tamaño[1]), tamaño[0], tamaño[1])
-        rect = rect.inflate(-6, -8)
+        rect = rect.inflate(-8, -5)
         img = pygame.transform.scale(self.imgmeteorito2, tamaño)
-        meteor = {"rect": rect, "tipo": "divisible", "size_key": "grande", "velocidad": velocidad, "img": img}
+        meteor = {"rect": rect, "tipo": "divisible", "size_key": "grande", "velocidad_key": "lento", "img": img}
         self.meteoritosl.append(meteor)
         
     def funcionesmeteorito(self, niveles_generacion, indice_dif):
     # Generación de meteoritos
+
         if len(self.meteoritosl) < niveles_generacion[indice_dif]:
             if random.random() < 0.5:
                 self.generar_meteorito1()
@@ -210,7 +211,10 @@ class meteoritos():
 
         # Movimiento y eliminación de meteoritos fuera de pantalla
         for meteorito in self.meteoritosl[:]:
-            meteorito["rect"].x -= meteorito["velocidad"]
+            velocidad = meteorito.get("velocidad", None)
+            if velocidad is None and "velocidad_key" in meteorito:
+                velocidad = self.meteoros["velocidades"][meteorito["velocidad_key"]]
+            meteorito["rect"].x -= velocidad
             if meteorito["rect"].right <= 0:
                 self.meteoritosl.remove(meteorito)
                 
@@ -220,13 +224,14 @@ class meteoritos():
         
         if meteorito["size_key"] == "grande":
             nuevo_tamaño_key = "mediano"
+            nueva_velocidad = "medio"
         elif meteorito["size_key"] == "mediano":
             nuevo_tamaño_key = "chico"
+            nueva_velocidad = "rapido"
         else:
             return []  # "chico" no se divide
         
         nuevo_tamaño = self.meteoros["tamanios"][nuevo_tamaño_key]
-        velocidad = meteorito["velocidad"]
         meteoritos_nuevos = []
         #Pequeña separacion de los meteoritos al dividirse
         separacion = [
@@ -243,7 +248,7 @@ class meteoritos():
                 "rect": rect, 
                 "tipo": "divisible", 
                 "size_key": nuevo_tamaño_key, 
-                "velocidad": velocidad, 
+                "velocidad_key": nueva_velocidad, 
                 "img": img
             }
             meteoritos_nuevos.append(nuevo_meteorito)
