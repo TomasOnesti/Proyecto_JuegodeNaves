@@ -4,8 +4,6 @@ from armas import *
 
 pygame.init()
 
-
-
 while True:
     #Variables importantes#
     reloj = pygame.time.Clock()#FPS
@@ -379,7 +377,6 @@ while True:
         nombre = pedir_nombre(pantalla,colores,fuente)
         db.insertar(nombre, puntos)
 
-
     #Pantalla de gameover
     while gameover:
         for event in pygame.event.get():
@@ -408,10 +405,10 @@ while True:
         nombre_texto = fuente_puntaje.render(f"Nombre: {nombre}", True, colores.WHITE)
         pantalla.blit(nombre_texto, nombre_texto.get_rect(center=(constante.ANCHO/2, constante.ALTO * 0.55)))
         #Letra y posición del texto instructivo para salir
-        instruccion = fuente_puntaje.render("Presionar enter para salir", True, colores.WHITE)
-        instruccion2 = fuente_puntaje.render("Presionar R para ir al inicio", True, colores.WHITE)
-        espacio_ins = instruccion.get_rect(center=(constante.ANCHO/2, constante.ALTO * 0.85))
-        espacio_ins2 = instruccion2.get_rect(center=(constante.ANCHO/2, constante.ALTO * 0.8))
+        instruccion = fuente_puntaje.render("Presionar enter para salir", True, colores.YELLOW)
+        instruccion2 = fuente_puntaje.render("Presionar R para ir al inicio", True, colores.YELLOW)
+        espacio_ins = instruccion.get_rect(center=(constante.ANCHO/2, constante.ALTO * 0.75))
+        espacio_ins2 = instruccion2.get_rect(center=(constante.ANCHO/2, constante.ALTO * 0.7))
         pantalla.blit(instruccion, espacio_ins)
         pantalla.blit(instruccion2,espacio_ins2)
         pygame.display.flip()    

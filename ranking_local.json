@@ -166,5 +166,17 @@
     {
         "usuario": "Yo",
         "puntaje": 93
+    },
+    {
+        "usuario": "f",
+        "puntaje": 0
+    },
+    {
+        "usuario": "h",
+        "puntaje": 0
+    },
+    {
+        "usuario": "k",
+        "puntaje": 0
     }
 ]
