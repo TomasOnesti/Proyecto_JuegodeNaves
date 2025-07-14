@@ -178,5 +178,25 @@
     {
         "usuario": "k",
         "puntaje": 0
+    },
+    {
+        "usuario": "F",
+        "puntaje": 4
+    },
+    {
+        "usuario": "Tomas",
+        "puntaje": 24
+    },
+    {
+        "usuario": "GG",
+        "puntaje": 7
+    },
+    {
+        "usuario": "F",
+        "puntaje": 0
+    },
+    {
+        "usuario": "FF",
+        "puntaje": 61
     }
 ]

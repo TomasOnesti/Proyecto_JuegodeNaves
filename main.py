@@ -7,7 +7,7 @@ pygame.init()
 while True:
     #Variables importantes#
     reloj = pygame.time.Clock()#FPS
-    fuente = constante.fuente_escalada(0.045)#Letra
+    fuente = constante.fuente_escalada(None,0.045)#Letra
     
     #Sonidos#
     pygame.mixer.music.load(constante.resource_path("elementos/audios/musica/Musicgame.mp3"))
@@ -59,6 +59,7 @@ while True:
     meteoritos_a_remover = []
     enemigos_a_remover = []
     balas_enemigas_a_remover = []
+    ultimo_tiempo_punto = pygame.time.get_ticks()
 
     x=0#coordenada del fondo
     puntos=0 #Puntuacion inicial en 0
@@ -72,7 +73,7 @@ while True:
     while inicio: 
         pantalla.blit(fondo,(0,0))
 
-        fuente_inicio = constante.fuente_escalada(0.08)
+        fuente_inicio = constante.fuente_escalada(None,0.08)
         texto_inicial= fuente_inicio.render("Iniciar Juego", True, colores.YELLOW)
         espacio = texto_inicial.get_rect(center=(constante.ANCHO/2, constante.ALTO * 0.25))
         pantalla.blit(texto_inicial, espacio)
@@ -88,22 +89,27 @@ while True:
         boton_mute = pygame.Rect(x_boton, constante.ALTO * 0.45, ancho_boton, alto_boton)
         boton_dificultad = pygame.Rect(x_boton, constante.ALTO * 0.55, ancho_boton, alto_boton)
         boton_tamaño = pygame.Rect(x_boton, constante.ALTO * 0.65, ancho_boton, alto_boton)
-        boton_ranking = pygame.Rect(constante.ANCHO/2 - 100, constante.ALTO/2 + 200, 200, 40)
+        boton_ranking = pygame.Rect(x_boton, constante.ALTO*0.85,ancho_boton, alto_boton)
+        boton_control = pygame.Rect(x_boton, constante.ALTO*0.75,ancho_boton, alto_boton)
+        
         pygame.draw.rect(pantalla, colores.WHITE, boton_mute, border_radius=8)
         pygame.draw.rect(pantalla, colores.WHITE, boton_dificultad, border_radius=8)
         pygame.draw.rect(pantalla, colores.WHITE, boton_tamaño, border_radius=8)
         pygame.draw.rect(pantalla, colores.WHITE, boton_ranking, border_radius=8)
+        pygame.draw.rect(pantalla, colores.WHITE, boton_control, border_radius=8)
         
         estados_mute = ["No", "Música", "Todo"]
         mute_text = fuente.render(f"Silenciar: {estados_mute[nivel_mute]}", True, colores.BLACK)
         dificultad_text = fuente.render(f"Dificultad: {dificultades[indice_dificultad]}", True, colores.BLACK)
         tamaño_text = fuente.render(f"Pantalla: {tamaños_pantalla[indice_tamaño][0]}x{tamaños_pantalla[indice_tamaño][1]}", True, colores.BLACK)
         ranking_text = fuente.render("Ver Ranking", True, colores.BLACK)
+        control_text = fuente.render("Controles", True, colores.BLACK)
         
         pantalla.blit(mute_text, (boton_mute.x + 10, boton_mute.y + 5))
         pantalla.blit(dificultad_text, (boton_dificultad.x + 10, boton_dificultad.y + 5))
         pantalla.blit(tamaño_text, (boton_tamaño.x + 10, boton_tamaño.y + 5))
-        pantalla.blit(ranking_text, (boton_ranking.x + 40, boton_ranking.y + 5))
+        pantalla.blit(ranking_text, (boton_ranking.x + 20, boton_ranking.y + 5))
+        pantalla.blit(control_text, (boton_control.x + 20, boton_control.y + 5))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -148,16 +154,21 @@ while True:
                     constante.ANCHO, constante.ALTO = tamaños_pantalla[indice_tamaño]
                     constante.tamaño = tamaños_pantalla[indice_tamaño]
                     pantalla = pygame.display.set_mode(constante.tamaño)
-                    fuente = constante.fuente_escalada(0.045)
+                    fuente = constante.fuente_escalada(None,0.045)
                 if boton_ranking.collidepoint(event.pos):
                     constante.mostrar_ranking(pantalla, colores, fuente, fondo, db)
+                if boton_control.collidepoint(event.pos):
+                    constante.mostrar_controles(pantalla, colores, fuente, fondo)
         pygame.display.flip()
         reloj.tick(constante.FPS)
         
     #Bucle donde se ejecuta el juego
     while running:
-       
-        pantalla.fill(constante.color().BLACK)
+        tiempo_actual = pygame.time.get_ticks()
+        if tiempo_actual - ultimo_tiempo_punto >= 1000:
+            puntos += 1
+            ultimo_tiempo_punto = tiempo_actual
+            pantalla.fill(constante.color().BLACK)
         #cerrar el juego
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -333,6 +344,7 @@ while True:
         else:
             municion = fuente.render(f"Escopeta: {jugador.arma3_balas}/60", True, colores.WHITE)
         pantalla.blit(municion, (constante.ANCHO * 0.01, constante.ALTO * 0.06))
+        
         pygame.display.flip()    
         reloj.tick(constante.FPS)
 
@@ -358,7 +370,7 @@ while True:
 
             pantalla.blit(fondo,(0,0))
 
-            fuente_nombre = constante.fuente_escalada(0.055)
+            fuente_nombre = constante.fuente_escalada(None,0.055)
             mensaje = fuente_nombre.render("Escribe tu nombre y presiona ENTER:", True, colores.WHITE)
             input_texto = fuente_nombre.render(texto, True, colores.YELLOW)
             rect_mensaje = mensaje.get_rect(center=(constante.ANCHO/2, constante.ALTO * 0.3))
@@ -384,7 +396,7 @@ while True:
                 pygame.quit()
                 exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     exit()
                 elif event.key == pygame.K_r:
@@ -394,18 +406,18 @@ while True:
         pantalla.blit(fondo,(0,0))#Fondo estatico en la pantalla del fin del juego
         
         #Letra y posicion del texto de gameover
-        fuente_fin = constante.fuente_escalada(0.08)
+        fuente_fin = constante.fuente_escalada(None,0.08)
         texto_fin = fuente_fin.render("GameOver", True, colores.RED)
         espacio_fin = texto_fin.get_rect(center=(constante.ANCHO/2, constante.ALTO * 0.3))
         pantalla.blit(texto_fin,espacio_fin)
         #Letra y posicion del texto de puntuación
-        fuente_puntaje = constante.fuente_escalada(0.05)
+        fuente_puntaje = constante.fuente_escalada(None,0.05)
         puntuacion_final = fuente_puntaje.render(f"Tu puntuacion final es de: {puntos}", True, colores.WHITE)
         pantalla.blit(puntuacion_final, puntuacion_final.get_rect(center=(constante.ANCHO/2, constante.ALTO * 0.5)))
         nombre_texto = fuente_puntaje.render(f"Nombre: {nombre}", True, colores.WHITE)
         pantalla.blit(nombre_texto, nombre_texto.get_rect(center=(constante.ANCHO/2, constante.ALTO * 0.55)))
         #Letra y posición del texto instructivo para salir
-        instruccion = fuente_puntaje.render("Presionar enter para salir", True, colores.YELLOW)
+        instruccion = fuente_puntaje.render("Presionar Escape para salir", True, colores.YELLOW)
         instruccion2 = fuente_puntaje.render("Presionar R para ir al inicio", True, colores.YELLOW)
         espacio_ins = instruccion.get_rect(center=(constante.ANCHO/2, constante.ALTO * 0.75))
         espacio_ins2 = instruccion2.get_rect(center=(constante.ANCHO/2, constante.ALTO * 0.7))

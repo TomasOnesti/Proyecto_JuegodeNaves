@@ -1,5 +1,5 @@
 ('D:\\Users\\PC\\Desktop\\Nueva '
- 'carpeta\\Proyecto_JuegodeNaves\\build\\main\\PYZ-00.pyz',
+ 'carpeta\\tareas\\Proyecto_JuegodeNaves\\build\\main\\PYZ-00.pyz',
  [('__future__',
    'C:\\Users\\PC\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\__future__.py',
    'PYMODULE'),
@@ -40,7 +40,8 @@
    'C:\\Users\\PC\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\argparse.py',
    'PYMODULE'),
   ('armas',
-   'D:\\Users\\PC\\Desktop\\Nueva carpeta\\Proyecto_JuegodeNaves\\armas.py',
+   'D:\\Users\\PC\\Desktop\\Nueva '
+   'carpeta\\tareas\\Proyecto_JuegodeNaves\\armas.py',
    'PYMODULE'),
   ('ast',
    'C:\\Users\\PC\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\ast.py',
@@ -175,7 +176,8 @@
    'C:\\Users\\PC\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\configparser.py',
    'PYMODULE'),
   ('constante',
-   'D:\\Users\\PC\\Desktop\\Nueva carpeta\\Proyecto_JuegodeNaves\\constante.py',
+   'D:\\Users\\PC\\Desktop\\Nueva '
+   'carpeta\\tareas\\Proyecto_JuegodeNaves\\constante.py',
    'PYMODULE'),
   ('contextlib',
    'C:\\Users\\PC\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\contextlib.py',
@@ -199,7 +201,8 @@
    'C:\\Users\\PC\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\ctypes\\wintypes.py',
    'PYMODULE'),
   ('database',
-   'D:\\Users\\PC\\Desktop\\Nueva carpeta\\Proyecto_JuegodeNaves\\database.py',
+   'D:\\Users\\PC\\Desktop\\Nueva '
+   'carpeta\\tareas\\Proyecto_JuegodeNaves\\database.py',
    'PYMODULE'),
   ('dataclasses',
    'C:\\Users\\PC\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\dataclasses.py',
@@ -552,7 +555,7 @@
    'PYMODULE'),
   ('personajes',
    'D:\\Users\\PC\\Desktop\\Nueva '
-   'carpeta\\Proyecto_JuegodeNaves\\personajes.py',
+   'carpeta\\tareas\\Proyecto_JuegodeNaves\\personajes.py',
    'PYMODULE'),
   ('pickle',
    'C:\\Users\\PC\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\pickle.py',
