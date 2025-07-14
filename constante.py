@@ -105,9 +105,6 @@ def mostrar_controles(pantalla, colores, fuente, fondo):
         controles = [
             "Movimiento: ↑ ↓ → ←",
             "Disparo: Z",
-            "Cambiar arma: X",
-            "Pausa: P",
-            "Mute: M",
         ]
 
         for i, texto in enumerate(controles):
